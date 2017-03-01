@@ -6,7 +6,6 @@ import {mapUrl} from 'utils/url.js';
 import PrettyError from 'pretty-error';
 import http from 'http';
 import SocketIo from 'socket.io';
-import expressJWT from 'express-jwt';
 
 require('./config/database');
 
@@ -26,7 +25,6 @@ app.use(session({
   saveUninitialized: false,
   cookie: { maxAge: 60000 }
 }));
-app.use(expressJWT({ secret: config.jwtSecret }).unless({path: [/\/auth/i]}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true

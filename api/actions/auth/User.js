@@ -6,7 +6,7 @@ const SALT_WORK_FACTOR = 10;
 
 const UserSchema = new Schema({
   email: { type: String, required: true, index: { unique: true } },
-  username: { type: String, required: true },
+  /*username: { type: String, required: true },*/
   password: { type: String, required: true }
 });
 

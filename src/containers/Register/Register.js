@@ -8,14 +8,14 @@ import * as authActions from 'redux/modules/auth';
   authActions)
 export default class Register extends Component {
   static propTypes = {
-    register: PropTypes.func
+    signup: PropTypes.func
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
     const email = this.refs.email;
     const password = this.refs.password;
-    this.props.register(email.value, password.value);
+    this.props.signup(email.value, password.value);
     email.value = '';
     password.value = '';
   };

@@ -1,8 +1,8 @@
-export default function logout(req) {
+export default function logout(req, res) {
   return new Promise((resolve) => {
-    req.session.destroy(() => {
-      req.session = null;
-      return resolve(null);
+    req.logOut();
+    req.session.destroy(function (err) {
+      resolve(null);
     });
   });
 }

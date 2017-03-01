@@ -10,20 +10,10 @@ const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
 const REGISTER = 'redux-example/auth/REGISTER';
 const REGISTER_SUCCESS = 'redux-example/auth/REGISTER_SUCCESS';
 const REGISTER_FAIL = 'redux-example/auth/REGISTER_FAIL';
-const userCookieName = 'loginResult';
-
-import cookie from 'react-cookie';
-import util from 'util';
 
 const initialState = {
   loaded: false
 };
-
-function saveAuthCookie(user) {
-  if (user) {
-    cookie.save( userCookieName, JSON.stringify( user ) );
-  }
-}
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
@@ -33,15 +23,13 @@ export default function reducer(state = initialState, action = {}) {
         loading: true
       };
     case LOAD_SUCCESS:
-      saveAuthCookie( action.result );
       return {
         ...state,
         loading: false,
         loaded: true,
-        user: cookie.load( userCookieName ) ? cookie.load( userCookieName ) : action.result
+        user: action.result
       };
     case LOAD_FAIL:
-      console.log(`auth LOAD_FAIL with error ${util.inspect(action.error)}`);
       return {
         ...state,
         loading: false,
@@ -54,7 +42,6 @@ export default function reducer(state = initialState, action = {}) {
         loggingIn: true
       };
     case LOGIN_SUCCESS:
-      saveAuthCookie(action.result);
       return {
         ...state,
         loggingIn: false,
@@ -73,7 +60,6 @@ export default function reducer(state = initialState, action = {}) {
         loggingOut: true
       };
     case LOGOUT_SUCCESS:
-      cookie.remove( userCookieName );
       return {
         ...state,
         loggingOut: false,
@@ -94,7 +80,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         registering: false,
-        user: null
+        user: action.result
       };
     case REGISTER_FAIL:
       return {
@@ -118,11 +104,10 @@ export function load() {
   };
 }
 
-export function register(email, password) {
-  console.log('send');
+export function signup(email, password) {
   return {
     types: [REGISTER, REGISTER_SUCCESS, REGISTER_FAIL],
-    promise: (client) => client.post( '/auth/register', {
+    promise: (client) => client.post( '/auth/signup', {
       data: {
         email,
         password

@@ -6,7 +6,7 @@ import Navbar from 'react-bootstrap/lib/Navbar';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import Helmet from 'react-helmet';
-import { isLoaded as isInfoLoaded, load as loadInfo } from 'redux/modules/info';
+/* import { isLoaded as isInfoLoaded, load as loadInfo } from 'redux/modules/info'; */
 import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
 import { InfoBar } from 'components';
 import { push } from 'react-router-redux';
@@ -17,9 +17,9 @@ import { asyncConnect } from 'redux-async-connect';
   promise: ({store: {dispatch, getState}}) => {
     const promises = [];
 
-    if (!isInfoLoaded(getState())) {
+    /* if (!isInfoLoaded(getState())) {
       promises.push(dispatch(loadInfo()));
-    }
+    } */
     if (!isAuthLoaded(getState())) {
       promises.push(dispatch(loadAuth()));
     }
@@ -99,8 +99,8 @@ export default class App extends Component {
                 <NavItem eventKey={6}>Login</NavItem>
               </LinkContainer>}
               {!user &&
-              <LinkContainer to="/register">
-                <NavItem eventKey={7}>Register</NavItem>
+              <LinkContainer to="/signup">
+                <NavItem eventKey={7}>Signup</NavItem>
               </LinkContainer>}
               {user &&
               <LinkContainer to="/logout">

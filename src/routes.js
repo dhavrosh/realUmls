@@ -38,7 +38,7 @@ export default (store) => {
     if (user) {
       console.log( `already logged in: redirect to home page` );
       // oops, logged in, so can't be here!
-      replace( '/' );
+      replace('/');
     }
   };
 
@@ -58,7 +58,7 @@ export default (store) => {
 
       <Route onEnter={requireAnonymous}>
         <Route path="login" component={Login}/>
-        <Route path="register" component={Register}/>
+        <Route path="signup" component={Register}/>
       </Route>
 
       { /* Routes */ }
