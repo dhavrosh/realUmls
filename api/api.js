@@ -20,10 +20,10 @@ const io = new SocketIo(server);
 io.path('/ws');
 
 app.use(session({
-  secret: config.jwtSecret,
+  secret: config.auth.sessionSecret,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 60000 }
+  cookie: { maxAge: 3600000 }
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -34,10 +34,12 @@ configureAuth(app, config);
 
 app.use((req, res) => {
   const splittedUrlPath = req.url.split('?')[0].split('/').slice(1);
-
   const {action, params} = mapUrl(actions, splittedUrlPath);
+  const privateAction = splittedUrlPath[0] !== 'auth';
 
   if (action) {
+    if (privateAction && !req.isAuthenticated()) res.status(401).end('UNAUTHORIZED');
+
     action(req, params)
       .then((result) => {
         if (result instanceof Function) {
@@ -49,8 +51,9 @@ app.use((req, res) => {
         if (reason && reason.redirect) {
           res.redirect(reason.redirect);
         } else {
+          const response = typeof reason === 'object' ? reason : {message: reason};
           console.error('API ERROR:', pretty.render(reason));
-          res.status(reason.status || 500).json(reason);
+          res.status(reason.status || 500).json(response);
         }
       });
   } else {

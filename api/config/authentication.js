@@ -1,62 +1,42 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import User from '../actions/auth/User';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import User from '../models/User';
+import config from '../../src/config';
+import * as strategies from './strategies';
 
 const configure = app => {
-
   app.use(passport.initialize());
   app.use(passport.session());
 
-  passport.use('login', new LocalStrategy({
-      usernameField: 'email'
-    },
-    function (username, password, done) {
-      const findUser = async () => {
-        const user = await User.findOne({ email: username });
+  passport.serializeUser((user, done) => done(null, user.id));
+  passport.deserializeUser((id, done) => User.findById(id, (err, user) => done(err, user)));
 
-        if (!user) return done(null, null, 'User not found');
+  passport.use('login', new LocalStrategy({ usernameField: 'email' }, strategies.login));
+  passport.use('signup', new LocalStrategy({ passReqToCallback : true }, strategies.signup));
+  passport.use(new FacebookStrategy({
+      ...config.auth.strategies.facebook,
+      callbackURL     : '/api/auth/facebook/callback',
+      profileFields: ['id', 'emails', 'name', 'displayName'],
+      passReqToCallback: true
+    }, strategies.social));
 
-        if (user.comparePassword(password)) {
-          done(null, user);
-        }
-        else {
-          done(null, null, `Bad password`);
-        }
-      };
+  passport.use(new GoogleStrategy({
+    ...config.auth.strategies.google,
+    callbackURL     : '/api/auth/google/callback',
+    profileFields: ['id', 'emails', 'name', 'displayName'],
+    passReqToCallback: true
+  }, strategies.social));
 
-      findUser().catch(done);
-    }
-  ));
-
-  passport.use('signup', new LocalStrategy({
-      usernameField: 'email',
-      passReqToCallback : true
-    },
-    function(req, username, password, done) {
-      const redisterUser = async () => {
-          const user = await User.findOne({ email: username });
-
-          if (user) {
-            return done(null, null, 'User already exists');
-          } else {
-            const newUser = await User.create(req.body);
-
-            return done(null, newUser);
-          }
-      };
-
-      redisterUser().catch(done);
+  app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
+  app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+    successRedirect : '/loginSuccess', failureRedirect : '/login'
   }));
-
-  passport.serializeUser(function(user, done) {
-    done(null, user.id);
-  });
-
-  passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-      done(err, user);
-    });
-  });
+  app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+  app.get('/auth/google/callback', passport.authenticate('google', {
+    successRedirect : '/loginSuccess', failureRedirect : '/login'
+  }));
 };
 
 export default configure;

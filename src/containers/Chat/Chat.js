@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
+import Helmet from 'react-helmet';
 
 @connect(
   state => ({user: state.auth.user})
@@ -55,6 +56,7 @@ export default class Chat extends Component {
 
     return (
       <div className={style.chat + ' container'}>
+        <Helmet title="Chat"/>
         <h1 className={style}>Chat</h1>
 
         {user &&

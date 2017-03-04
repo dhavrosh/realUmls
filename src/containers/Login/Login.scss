@@ -4,10 +4,16 @@
     border-radius: 5px;
     border: 1px solid #ccc;
   }
+  h1 {
+    text-align: center;
+  }
   form {
-    margin: 30px 0;
-    :global(.btn) {
-      margin-left: 10px;
+    :global(.error) {
+      color: #ac2925;
+    }
+
+    label {
+      line-height: 1;
     }
   }
 }

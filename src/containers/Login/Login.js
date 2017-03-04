@@ -4,74 +4,59 @@ import Helmet from 'react-helmet';
 import * as authActions from 'redux/modules/auth';
 
 @connect(
-  state => ({user: state.auth.user}),
-  authActions)
+  state => ({ loginError: state.auth.loginError }), authActions)
 export default class Login extends Component {
   static propTypes = {
-    user: PropTypes.object,
+    loginError: PropTypes.object,
     login: PropTypes.func,
-    logout: PropTypes.func
-  }
+  };
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const username = this.refs.username;
+    const username = this.refs.email;
     const password = this.refs.password;
     this.props.login(username.value, password.value);
     username.value = '';
     password.value = '';
-  }
+  };
 
   render() {
-    const {user, logout} = this.props;
+    const { loginError } = this.props;
     const styles = require('./Login.scss');
     return (
-      <div className={styles.loginPage + ' container'}>
+      <div className={ styles.loginPage }>
         <Helmet title="Login"/>
-        <h1>Login</h1>
-        {!user &&
         <div>
-          <div>
-            <form className="login-form form-inline" onSubmit={this.handleSubmit}>
+          <div className="row">
+            <h1>Login</h1>
+            <form className="col-md-6 col-md-offset-3 login-form" onSubmit={this.handleSubmit}>
+              <label className="error">{ loginError && loginError.message }</label>
               <div className="form-group">
-                <input type="text" ref="username" placeholder="Enter your username" className="form-control"/>
-                <input type="text" ref="password" placeholder="Enter password" className="form-control"/>
+                <label htmlFor="email">Email:</label>
+                <input type="email" id="email" ref="email" placeholder="Enter your email" className="form-control"/>
               </div>
-              <button className="btn btn-success" onClick={this.handleSubmit}><i className="fa fa-sign-in"/>{' '}Log In
+              <div className="form-group">
+                <label htmlFor="pwd">Password:</label>
+                <input type="password" id="pwd" ref="password" placeholder="Enter your password" className="form-control"/>
+              </div>
+              <button className="btn btn-success pull-right" onClick={this.handleSubmit}><i className="fa fa-sign-in"/>
+                {' '}Log In
               </button>
             </form>
-            <p>This will "log you in" as this user, storing the username in the session of the API server.</p>
           </div>
-          <div>
-            <h1>Login with FB</h1>
-            <div>
-              <a href="/api/login/facebook">
-                <svg
-                  width="30"
-                  height="30"
-                  viewBox="0 0 30 30"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M22 16l1-5h-5V7c0-1.544.784-2 3-2h2V0h-4c-4.072 0-7 2.435-7 7v4H7v5h5v14h6V16h4z"
-                  />
-                </svg>
+          <div className="row">
+            <div className="col-md-6 col-md-offset-3">
+              <h1>or use existing accounts</h1>
+              <a href="/api/auth/facebook">
                 <span>Log in with Facebook</span>
+              </a>
+              <br></br>
+              <a href="/api/auth/google">
+                <span>Log in with Google</span>
               </a>
             </div>
           </div>
-        </div>
-        }
-        {user &&
-        <div>
-          <p>You are currently logged in as {user.firstName} {user.lastName}.</p>
-
-          <div>
-            <button className="btn btn-danger" onClick={logout}><i className="fa fa-sign-out"/>{' '}Log Out</button>
-          </div>
-        </div>
-        }
-      </div>
+        </div></div>
     );
   }
 }

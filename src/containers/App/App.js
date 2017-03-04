@@ -6,9 +6,7 @@ import Navbar from 'react-bootstrap/lib/Navbar';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import Helmet from 'react-helmet';
-/* import { isLoaded as isInfoLoaded, load as loadInfo } from 'redux/modules/info'; */
 import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
-import { InfoBar } from 'components';
 import { push } from 'react-router-redux';
 import config from '../../config';
 import { asyncConnect } from 'redux-async-connect';
@@ -20,6 +18,7 @@ import { asyncConnect } from 'redux-async-connect';
     /* if (!isInfoLoaded(getState())) {
       promises.push(dispatch(loadInfo()));
     } */
+
     if (!isAuthLoaded(getState())) {
       promises.push(dispatch(loadAuth()));
     }
@@ -28,7 +27,7 @@ import { asyncConnect } from 'redux-async-connect';
   }
 }])
 @connect(
-  state => ({user: state.auth.user}),
+  state => ({ user: state.auth.user }),
   {logout, pushState: push})
 export default class App extends Component {
   static propTypes = {
@@ -43,6 +42,7 @@ export default class App extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
     if (!this.props.user && nextProps.user) {
       // login
       this.props.pushState('/loginSuccess');
@@ -76,11 +76,11 @@ export default class App extends Component {
           </Navbar.Header>
 
           <Navbar.Collapse eventKey={0}>
-            <Nav navbar>
+            <Nav navbar pullLeft>
               {user && <LinkContainer to="/chat">
                 <NavItem eventKey={1}>Chat</NavItem>
               </LinkContainer>}
-
+            </Nav>
               {/* <LinkContainer to="/widgets">
                 <NavItem eventKey={2}>Widgets</NavItem>
               </LinkContainer>
@@ -93,38 +93,38 @@ export default class App extends Component {
               <LinkContainer to="/about">
                 <NavItem eventKey={5}>About Us</NavItem>
               </LinkContainer> */}
-
-              {!user &&
-              <LinkContainer to="/login">
-                <NavItem eventKey={6}>Login</NavItem>
-              </LinkContainer>}
-              {!user &&
-              <LinkContainer to="/signup">
-                <NavItem eventKey={7}>Signup</NavItem>
-              </LinkContainer>}
-              {user &&
-              <LinkContainer to="/logout">
-                <NavItem eventKey={8} className="logout-link" onClick={this.handleLogout}>
-                  Logout
-                </NavItem>
-              </LinkContainer>}
-            </Nav>
+            <Nav navbar pullRight>
+                {!user &&
+                <LinkContainer to="/login">
+                  <NavItem eventKey={6}>Login</NavItem>
+                </LinkContainer>}
+                {!user &&
+                <LinkContainer to="/signup">
+                  <NavItem eventKey={7}>Signup</NavItem>
+                </LinkContainer>}
+                {user &&
+                <LinkContainer to="/logout">
+                  <NavItem eventKey={8} className="logout-link" onClick={this.handleLogout}>
+                    Logout
+                  </NavItem>
+                </LinkContainer>}
+              </Nav>
             {user &&
-            <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.name}</strong>.</p>}
+            <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.username}</strong></p>}
           </Navbar.Collapse>
         </Navbar>
 
-        <div className={styles.appContent}>
+        <div className="container">
           {this.props.children}
         </div>
-        <InfoBar/>
+        {/* <InfoBar/> */}
 
-        <div className="well text-center">
+        {/* <div className="well text-center">
           Have questions? Ask for help <a
           href="https://github.com/erikras/react-redux-universal-hot-example/issues"
           target="_blank">on Github</a> or in the <a
           href="https://discord.gg/0ZcbPKXt5bZZb1Ko" target="_blank">#react-redux-universal</a> Discord channel.
-        </div>
+        </div> */}
       </div>
     );
   }

@@ -18,7 +18,6 @@ export function mapUrl(availableActions = {}, url = []) {
     }
   };
   /*eslint-enable */
-
   const actionAndParams = url.reduce(reducer, {action: availableActions, params: []});
 
   return (typeof actionAndParams.action === 'function') ? actionAndParams : notFound;
