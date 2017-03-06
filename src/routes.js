@@ -8,7 +8,7 @@ import {
     /* Widgets,
     About, */
     Login,
-    LoginSuccess,
+    Dashboard,
     Register,
     /* Survey, */
     NotFound,
@@ -19,10 +19,7 @@ export default (store) => {
   const requireLogin = (nextState, replace, cb) => {
     function checkAuth() {
       const { auth: { user }} = store.getState();
-      if (!user) {
-        // oops, not logged in, so can't be here!
-        replace('/');
-      }
+      if (!user) replace('/');
       cb();
     }
 
@@ -35,11 +32,7 @@ export default (store) => {
 
   const requireAnonymous = (nextState, replace) => {
     const {auth: {user}} = store.getState();
-    if (user) {
-      console.log( `already logged in: redirect to home page` );
-      // oops, logged in, so can't be here!
-      replace('/');
-    }
+    if (user) replace('/');
   };
 
   /**
@@ -53,7 +46,7 @@ export default (store) => {
       { /* Routes requiring login */ }
       <Route onEnter={requireLogin}>
         <Route path="chat" component={Chat}/>
-        <Route path="loginSuccess" component={LoginSuccess}/>
+        <Route path="dashboard" component={Dashboard}/>
       </Route>
 
       <Route onEnter={requireAnonymous}>

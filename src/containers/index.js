@@ -5,7 +5,7 @@ export Widgets from './Widgets/Widgets';
 export About from './About/About';
 export Login from './Login/Login';
 export Register from './Register/Register';
-export LoginSuccess from './LoginSuccess/LoginSuccess';
+export Dashboard from './Dashboard/Dashboard';
 export Survey from './Survey/Survey';
 export NotFound from './NotFound/NotFound';
 export Pagination from './Pagination/Pagination';

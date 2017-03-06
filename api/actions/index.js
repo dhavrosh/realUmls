@@ -1,3 +1,4 @@
-export * as auth from './auth/index';
-export * as widget from './widget/index';
-export * as survey from './survey/index';
+export * as auth from './auth';
+export * as widget from './widget';
+export * as survey from './survey';
+export * as chatRoom from './chatRoom'

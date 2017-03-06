@@ -15,10 +15,6 @@ import { asyncConnect } from 'redux-async-connect';
   promise: ({store: {dispatch, getState}}) => {
     const promises = [];
 
-    /* if (!isInfoLoaded(getState())) {
-      promises.push(dispatch(loadInfo()));
-    } */
-
     if (!isAuthLoaded(getState())) {
       promises.push(dispatch(loadAuth()));
     }
@@ -42,10 +38,9 @@ export default class App extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     if (!this.props.user && nextProps.user) {
       // login
-      this.props.pushState('/loginSuccess');
+      this.props.pushState('/dashboard');
     } else if (this.props.user && !nextProps.user) {
       // logout
       this.props.pushState('/');
@@ -77,22 +72,17 @@ export default class App extends Component {
 
           <Navbar.Collapse eventKey={0}>
             <Nav navbar pullLeft>
-              {user && <LinkContainer to="/chat">
-                <NavItem eventKey={1}>Chat</NavItem>
-              </LinkContainer>}
+              {user &&
+                <LinkContainer to="/dashboard">
+                  <NavItem eventKey={1}>Dashboard</NavItem>
+                </LinkContainer>
+              }
+              {user &&
+                <LinkContainer to="/chat">
+                  <NavItem eventKey={1}>Chat</NavItem>
+                </LinkContainer>
+              }
             </Nav>
-              {/* <LinkContainer to="/widgets">
-                <NavItem eventKey={2}>Widgets</NavItem>
-              </LinkContainer>
-              <LinkContainer to="/survey">
-                <NavItem eventKey={3}>Survey</NavItem>
-              </LinkContainer>
-              <LinkContainer to="/pagination">
-                <NavItem eventKey={4}>Pagination</NavItem>
-              </LinkContainer>
-              <LinkContainer to="/about">
-                <NavItem eventKey={5}>About Us</NavItem>
-              </LinkContainer> */}
             <Nav navbar pullRight>
                 {!user &&
                 <LinkContainer to="/login">
@@ -114,17 +104,10 @@ export default class App extends Component {
           </Navbar.Collapse>
         </Navbar>
 
-        <div className="container">
+        <div className="container" style={{ marginTop: 35 }}>
           {this.props.children}
         </div>
         {/* <InfoBar/> */}
-
-        {/* <div className="well text-center">
-          Have questions? Ask for help <a
-          href="https://github.com/erikras/react-redux-universal-hot-example/issues"
-          target="_blank">on Github</a> or in the <a
-          href="https://discord.gg/0ZcbPKXt5bZZb1Ko" target="_blank">#react-redux-universal</a> Discord channel.
-        </div> */}
       </div>
     );
   }
