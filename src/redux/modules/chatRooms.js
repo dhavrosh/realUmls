@@ -4,6 +4,9 @@ const LOAD_FAIL = 'chatRooms/LOAD_FAIL';
 const SAVE = 'chatRooms/SAVE';
 const SAVE_SUCCESS = 'chatRooms/SAVE_SUCCESS';
 const SAVE_FAIL = 'chatRooms/SAVE_FAIL';
+const REMOVE = 'chatRooms/REMOVE';
+const REMOVE_SUCCESS = 'chatRooms/REMOVE_SUCCESS';
+const REMOVE_FAIL = 'chatRooms/REMOVE_FAIL';
 
 const initialState = {
   loaded: false,
@@ -34,19 +37,37 @@ export default function reducer(state = initialState, action = {}) {
       };
     case SAVE:
       return state;
-    case SAVE_SUCCESS:
+    case SAVE_SUCCESS: {
       const data = [...state.data];
+      const index = data.findIndex(chatRoom => chatRoom._id === action.result._id);
 
-      data.push(action.result);
+      if (index > -1) {
+        data[index] = action.result;
+      } else {
+        data.push(action.result);
+      }
 
-      return {
-        ...state,
-        data: data
-      };
+      return { ...state, data: data };
+    }
     case SAVE_FAIL:
       return typeof action.error === 'string' ? {
         ...state,
         saveError: action.error
+      } : state;
+    case REMOVE:
+      return state;
+    case REMOVE_SUCCESS: {
+      const data = [...state.data];
+      const newData = data.filter(
+        chatRoom => chatRoom._id !== action.result._id
+      );
+
+      return { ...state, data: newData };
+    }
+    case REMOVE_FAIL:
+      return typeof action.error === 'string' ? {
+        ...state,
+        removeError: action.error
       } : state;
     default:
       return state;
@@ -64,11 +85,21 @@ export function load() {
   };
 }
 
-export function save(title, description) {
+export function save(title, description, id) {
+  const url = id
+    ? `/chatRoom/save/${id}` : '/chatRoom/save';
+
   return {
     types: [SAVE, SAVE_SUCCESS, SAVE_FAIL],
-    promise: (client) => client.post('/chatRoom/save', {
+    promise: (client) => client.post(url, {
       data: { title, description }
     })
+  };
+}
+
+export function remove(id) {
+  return {
+    types: [REMOVE, REMOVE_SUCCESS, REMOVE_FAIL],
+    promise: (client) => client.get(`/chatRoom/remove/${id}`)
   };
 }

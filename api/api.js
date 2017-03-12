@@ -38,7 +38,7 @@ app.use((req, res) => {
   const privateAction = splittedUrlPath[0] !== 'auth';
 
   if (action) {
-    if (privateAction && !req.isAuthenticated()) res.status(401).end('UNAUTHORIZED');
+    // if (privateAction && !req.isAuthenticated()) res.status(401).end('UNAUTHORIZED');
 
     action(req, params)
       .then((result) => {

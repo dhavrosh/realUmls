@@ -55,7 +55,7 @@ export default class Chat extends Component {
     const {user} = this.props;
 
     return (
-      <div className={style.chat + ' container'}>
+      <div className={style.chat}>
         <Helmet title="Chat"/>
         <h1 className={style}>Chat</h1>
 

@@ -11,5 +11,6 @@ export InfoBar from './InfoBar/InfoBar';
 export MiniInfoBar from './MiniInfoBar/MiniInfoBar';
 export SurveyForm from './SurveyForm/SurveyForm';
 export WidgetForm from './WidgetForm/WidgetForm';
-export ChatPanel from './ChatPanel/ChatPanel';
+export ChatPanel from './Chat/Panel/Panel';
+export ChatModal from './Chat/Modal/Modal';
 
