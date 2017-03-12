@@ -6,13 +6,15 @@ export default class ChatPanel extends Component {
     title: PropTypes.string,
     children: PropTypes.string.isRequired,
     edit: PropTypes.func.isRequired,
-    remove: PropTypes.func.isRequired
+    remove: PropTypes.func.isRequired,
+    redirect: PropTypes.func.isRequired
   };
 
   render() {
-    const { title, edit, remove } = this.props;
+    const { title, edit, remove, redirect } = this.props;
     const margin = { margin: '0 2px', textAlign: 'center' };
     const align = { verticalAlign: 'middle', margin: 0 };
+    const pointer = { cursor: 'pointer' };
     const header = (
       <span>
         <div className="row">
@@ -31,6 +33,13 @@ export default class ChatPanel extends Component {
       </span>
     );
 
-    return (<Panel header={ header }>{ this.props.children }</Panel>);
+    return (
+      <Panel
+        style={ pointer }
+        onClick={ redirect }
+        header={ header }>
+        { this.props.children }
+      </Panel>
+    );
   }
 }

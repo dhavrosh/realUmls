@@ -9,21 +9,36 @@ export default class ChatModal extends Component {
     close: PropTypes.func.isRequired
   };
 
+  state = {
+    error: { message: '' }
+  };
+
   saveChatRoom() {
     const title = this.refs.title;
     const description = this.refs.description;
-    const data = this.props.data;
-    const args = [title.value, description.value];
 
-    if (data && data._id) {
-      args.push(data._id);
+    if (title.value && description.value) {
+      const data = this.props.data;
+      const args = [title.value, description.value];
+
+      if (data && data._id) {
+        args.push(data._id);
+      }
+
+      this.props.saveChatRoom(...args);
+      this.props.close();
+      this.setState({ error: null });
+
+      title.value = '';
+      description.value = '';
+    } else {
+      this.setState({ error: { message: 'All fields are required' }});
     }
+  }
 
-    this.props.saveChatRoom(...args);
+  close() {
+    if (this.state.error) this.setState({ error: null });
     this.props.close();
-
-    title.value = '';
-    description.value = '';
   }
 
   render() {
@@ -31,6 +46,7 @@ export default class ChatModal extends Component {
     const buttonGroup = { marginTop: 30 };
     const notEmphatic = { border: 'none' };
     const lined = { lineHeight: 1 };
+    const error = { color: '#ac2925' };
     const bordered = {
       padding: '5px 10px',
       borderRadius: 5,
@@ -40,11 +56,12 @@ export default class ChatModal extends Component {
     return (
       <Modal show={ showModal } onHide={ close }>
         <Modal.Header closeButton style={ notEmphatic }>
-          <Modal.Title>Make your chat and have fun</Modal.Title>
+          <Modal.Title>Make your chat and have some fun</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="row">
             <div className="col-md-12">
+              <label style={ error }>{ this.state.error && this.state.error.message }</label>
               <div className="form-group">
                 <label htmlFor="title" style={ lined }>Title:</label>
                 <input
@@ -68,7 +85,7 @@ export default class ChatModal extends Component {
               </div>
               <div style={ buttonGroup }>
                 <button className="btn btn-success pull-right" onClick={ this.saveChatRoom.bind(this) } >Save</button>
-                <button className="btn btn-link pull-right" onClick={ this.props.close }>Cancel</button>
+                <button className="btn btn-link pull-right" onClick={ this.close.bind(this) }>Cancel</button>
               </div>
             </div>
           </div>

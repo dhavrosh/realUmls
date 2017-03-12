@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
+import { push } from 'react-router-redux';
 import { asyncConnect } from 'redux-async-connect';
 import { ChatPanel, ChatModal } from 'components';
 import {
@@ -21,13 +22,14 @@ import {
 @connect(state => ({
   user: state.auth.user,
   chatRooms: state.chatRooms.data
-}), { saveChatRooms, removeChatRoom })
+}), { saveChatRooms, removeChatRoom, pushState: push })
 export default class Dashboard extends Component {
   static propTypes = {
     user: PropTypes.object,
     chatRooms: PropTypes.array,
     saveChatRooms: PropTypes.func,
-    removeChatRoom: PropTypes.func
+    removeChatRoom: PropTypes.func,
+    pushState: PropTypes.func
   };
 
   state = {
@@ -67,21 +69,23 @@ export default class Dashboard extends Component {
         </div>
         <div>
           <div className="row">
-          { chatRooms && chatRooms.map(room => {
-            const editAction = () => this.setState({ modal: { data: room, show: true }});
-            const removeAction = () => this.props.removeChatRoom(room._id);
+          { chatRooms && (chatRooms.length && chatRooms.map(room => {
+            const editAction = event => { event.stopPropagation(); this.setState({ modal: { data: room, show: true }}); };
+            const removeAction = event => { event.stopPropagation(); this.props.removeChatRoom(room._id); };
+            const redirectAction = () => this.props.pushState(`/chat/${ room._id }`);
             return (
                 <div className="col-md-4" key={ room._id }>
                     <ChatPanel
                       title={ room.title }
                       edit={ editAction }
-                      remove={ removeAction }>
+                      remove={ removeAction }
+                      redirect={ redirectAction }>
                       { room.description }
                     </ChatPanel>
                 </div>
              );
+          }) || <div className="col-md-12">Press 'Create' to add chats to your Dashboard</div>)
           }
-          )}
           </div>
         </div>
         <ChatModal

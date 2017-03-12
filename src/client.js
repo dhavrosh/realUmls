@@ -22,11 +22,8 @@ const store = createStore(_browserHistory, client, window.__data);
 const history = syncHistoryWithStore(_browserHistory, store);
 
 function initSocket() {
-  const socket = io('', {path: '/ws'});
-  socket.on('news', (data) => {
-    console.log(data);
-    socket.emit('my other event', { my: 'data from client' });
-  });
+  const socket = io('/chat', { path: '/ws' });
+
   socket.on('msg', (data) => {
     console.log(data);
   });

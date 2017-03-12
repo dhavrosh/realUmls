@@ -2,13 +2,12 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 
-@connect(
-  state => ({user: state.auth.user})
-)
+@connect(state => ({ user: state.auth.user }))
 export default class Chat extends Component {
 
   static propTypes = {
-    user: PropTypes.object
+    user: PropTypes.object,
+    params: PropTypes.object
   };
 
   state = {
@@ -18,65 +17,69 @@ export default class Chat extends Component {
 
   componentDidMount() {
     if (socket) {
-      socket.on('msg', this.onMessageReceived);
-      setTimeout(() => {
-        socket.emit('history', {offset: 0, length: 100});
-      }, 100);
+      socket.emit('JOIN_ROOM', this.props.params.id);
+
+      socket.on('NEW_PARTICIPANT', () => console.log('New Participant'));
+      socket.on('MESSAGE', this.onMessageReceived);
+      socket.on('INIT', this.onInit);
     }
   }
 
   componentWillUnmount() {
     if (socket) {
-      socket.removeListener('msg', this.onMessageReceived);
+      socket.removeListener('MESSAGE', this.onMessageReceived);
     }
   }
+
+  onInit = messages => {
+    if (this.refs.messages) {
+      this.setState({ messages });
+    }
+  };
 
   onMessageReceived = (data) => {
     const messages = this.state.messages;
     messages.push(data);
-    this.setState({messages});
-  }
+    this.setState({ messages });
+  };
 
   handleSubmit = (event) => {
     event.preventDefault();
 
     const msg = this.state.message;
+    const roomId = this.props.params.id;
 
-    this.setState({message: ''});
-
-    socket.emit('msg', {
-      from: this.props.user.name,
-      text: msg
-    });
-  }
+    if (msg) {
+      this.setState({ message: '' });
+      socket.emit('MESSAGE', roomId, {
+        from: this.props.user && this.props.user.username || 'Anonymous',
+        text: msg
+      });
+    }
+  };
 
   render() {
     const style = require('./Chat.scss');
-    const {user} = this.props;
+    const margin = { marginTop: 30 };
 
     return (
       <div className={style.chat}>
         <Helmet title="Chat"/>
         <h1 className={style}>Chat</h1>
 
-        {user &&
         <div>
-          <ul>
+          <ul style={ margin } ref="messages">
           {this.state.messages.map((msg) => {
-            return <li key={`chat.msg.${msg.id}`}>{msg.from}: {msg.text}</li>;
+            return msg ? <li key={`chat.msg.${msg.id}`}>{msg.from}: {msg.text}</li> : '';
           })}
           </ul>
           <form className="login-form" onSubmit={this.handleSubmit}>
             <input type="text" ref="message" placeholder="Enter your message"
              value={this.state.message}
-             onChange={(event) => {
-               this.setState({message: event.target.value});
-             }
-            }/>
-            <button className="btn" onClick={this.handleSubmit}>Send</button>
+             onChange={ (event) => this.setState({ message: event.target.value }) }/>
+            <button className="btn" onClick={ this.handleSubmit }>Send</button>
           </form>
         </div>
-        }
       </div>
     );
   }

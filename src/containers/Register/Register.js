@@ -1,8 +1,20 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
+import { asyncConnect } from 'redux-async-connect';
 import * as authActions from 'redux/modules/auth';
 
+@asyncConnect([{
+  promise: ({store: {dispatch, getState}}) => {
+    const promises = [];
+
+    if (authActions.isSignupError(getState())) {
+      promises.push(dispatch(authActions.resetSignupError()));
+    }
+
+    return Promise.all(promises);
+  }
+}])
 @connect(state => ({ registerError: state.auth.registerError }), authActions)
 export default class Register extends Component {
   static propTypes = {

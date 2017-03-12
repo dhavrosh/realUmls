@@ -1,15 +1,17 @@
-const LOAD = 'redux-example/auth/LOAD';
-const LOAD_SUCCESS = 'redux-example/auth/LOAD_SUCCESS';
-const LOAD_FAIL = 'redux-example/auth/LOAD_FAIL';
-const LOGIN = 'redux-example/auth/LOGIN';
-const LOGIN_SUCCESS = 'redux-example/auth/LOGIN_SUCCESS';
-const LOGIN_FAIL = 'redux-example/auth/LOGIN_FAIL';
-const LOGOUT = 'redux-example/auth/LOGOUT';
-const LOGOUT_SUCCESS = 'redux-example/auth/LOGOUT_SUCCESS';
-const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
-const REGISTER = 'redux-example/auth/REGISTER';
-const REGISTER_SUCCESS = 'redux-example/auth/REGISTER_SUCCESS';
-const REGISTER_FAIL = 'redux-example/auth/REGISTER_FAIL';
+const LOAD = 'realUmls/auth/LOAD';
+const LOAD_SUCCESS = 'realUmls/auth/LOAD_SUCCESS';
+const LOAD_FAIL = 'realUmls/auth/LOAD_FAIL';
+const LOGIN = 'realUmls/auth/LOGIN';
+const LOGIN_SUCCESS = 'realUmls/auth/LOGIN_SUCCESS';
+const LOGIN_FAIL = 'realUmls/auth/LOGIN_FAIL';
+const RESET_LOGIN_ERROR = 'realUmls/auth/RESET_LOGOUT_ERROR';
+const LOGOUT = 'realUmls/auth/LOGOUT';
+const LOGOUT_SUCCESS = 'realUmls/auth/LOGOUT_SUCCESS';
+const LOGOUT_FAIL = 'realUmls/auth/LOGOUT_FAIL';
+const REGISTER = 'realUmls/auth/REGISTER';
+const REGISTER_SUCCESS = 'realUmls/auth/REGISTER_SUCCESS';
+const REGISTER_FAIL = 'realUmls/auth/REGISTER_FAIL';
+const RESET_SIGNUP_ERROR = 'realUmls/auth/RESET_SIGNUP_ERROR';
 
 const initialState = {
   loaded: false
@@ -54,6 +56,11 @@ export default function reducer(state = initialState, action = {}) {
         user: null,
         loginError: action.error
       };
+    case RESET_LOGIN_ERROR:
+      return {
+        ...state,
+        loginError: null
+      };
     case LOGOUT:
       return {
         ...state,
@@ -87,6 +94,11 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         registering: false,
         registerError: action.error
+      };
+    case RESET_SIGNUP_ERROR:
+      return {
+        ...state,
+        registerError: null
       };
     default:
       return state;
@@ -126,6 +138,26 @@ export function login(email, password) {
         password
       }
     } )
+  };
+}
+
+export function isLoginError(globalState) {
+  return globalState.auth && globalState.auth.loginError;
+}
+
+export function resetLoginError() {
+  return {
+    type: RESET_LOGIN_ERROR
+  };
+}
+
+export function isSignupError(globalState) {
+  return globalState.auth && globalState.auth.registerError;
+}
+
+export function resetSignupError() {
+  return {
+    type: RESET_SIGNUP_ERROR
   };
 }
 

@@ -38,7 +38,7 @@ app.use((req, res) => {
   const privateAction = splittedUrlPath[0] !== 'auth';
 
   if (action) {
-    // if (privateAction && !req.isAuthenticated()) res.status(401).end('UNAUTHORIZED');
+    if (privateAction && !req.isAuthenticated()) res.status(401).end('UNAUTHORIZED');
 
     action(req, params)
       .then((result) => {
@@ -61,10 +61,35 @@ app.use((req, res) => {
   }
 });
 
+function Room(id, bufferSize) {
+  this.id = id;
+  this.sockets = [];
+  this.bufferSize = bufferSize;
+  this.messages = new Array(bufferSize);
+  this.messageIndex = 0;
+  this.addSocket = socket => this.sockets.push(socket);
+  this.getId = () => this.id;
+  this.getMessages = () => this.messages;
+  this.addMessage = message => {
+    message.id = this.messageIndex;
+    this.messages[this.messageIndex % this.bufferSize] = message;
+    this.messageIndex++;
+  };
+}
 
-const bufferSize = 100;
-const messageBuffer = new Array(bufferSize);
-let messageIndex = 0;
+function Rooms() {
+  this.rooms = [];
+  this.getBySocket = socket => this.rooms.find(room => room.sockets.indexOf(socket) > -1);
+  this.getById = id => this.rooms.find(room => room.id === id);
+  this.create = (id, socket) => {
+    const room = new Room(id, 100);
+    room.addSocket(socket);
+    this.rooms.push(room);
+    return room;
+  }
+}
+
+const rooms = new Rooms();
 
 if (config.apiPort) {
   const runnable = app.listen(config.apiPort, (err) => {
@@ -75,26 +100,31 @@ if (config.apiPort) {
     console.info('==> 💻  Send requests to http://%s:%s', config.apiHost, config.apiPort);
   });
 
-  io.on('connection', (socket) => {
-    socket.emit('news', {msg: `'Hello World!' from server`});
+  const chat = io.of('/chat');
 
-    socket.on('history', () => {
-      for (let index = 0; index < bufferSize; index++) {
-        const msgNo = (messageIndex + index) % bufferSize;
-        const msg = messageBuffer[msgNo];
-        if (msg) {
-          socket.emit('msg', msg);
-        }
-      }
+  chat.on('connection', (socket) => {
+
+    socket.on('JOIN_ROOM', id => {
+      let room = rooms.getById(id);
+
+      if (!room) {
+        room = rooms.create(id, socket.id);
+      } else room.addSocket(socket.id);
+
+      socket.join(id);
+      socket.emit('INIT', room.getMessages());
+      // socket.broadcast.to(id).emit('NEW_PARTICIPANT');
     });
 
-    socket.on('msg', (data) => {
-      data.id = messageIndex;
-      messageBuffer[messageIndex % bufferSize] = data;
-      messageIndex++;
-      io.emit('msg', data);
+    socket.on('MESSAGE', (id, data) => {
+      const room = rooms.getById(id);
+
+      room.addMessage(data);
+      chat.in(room.getId()).emit('MESSAGE', data);
     });
+
   });
+
   io.listen(runnable);
 } else {
   console.error('==>     ERROR: No PORT environment variable has been specified');

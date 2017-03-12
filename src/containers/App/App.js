@@ -77,11 +77,6 @@ export default class App extends Component {
                   <NavItem eventKey={1}>Dashboard</NavItem>
                 </LinkContainer>
               }
-              {user &&
-                <LinkContainer to="/chat">
-                  <NavItem eventKey={1}>Chat</NavItem>
-                </LinkContainer>
-              }
             </Nav>
             <Nav navbar pullRight>
                 {!user &&

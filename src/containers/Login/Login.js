@@ -1,8 +1,20 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
+import { asyncConnect } from 'redux-async-connect';
 import * as authActions from 'redux/modules/auth';
 
+@asyncConnect([{
+  promise: ({store: {dispatch, getState}}) => {
+    const promises = [];
+
+    if (authActions.isLoginError(getState())) {
+      promises.push(dispatch(authActions.resetLoginError()));
+    }
+
+    return Promise.all(promises);
+  }
+}])
 @connect(
   state => ({ loginError: state.auth.loginError }), authActions)
 export default class Login extends Component {
