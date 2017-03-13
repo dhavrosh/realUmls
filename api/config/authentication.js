@@ -17,14 +17,12 @@ const configure = app => {
   passport.use('signup', new LocalStrategy({ passReqToCallback : true }, strategies.signup));
   passport.use(new FacebookStrategy({
       ...config.auth.strategies.facebook,
-      callbackURL     : '/api/auth/facebook/callback',
       profileFields: ['id', 'emails', 'name', 'displayName'],
       passReqToCallback: true
     }, strategies.social));
 
   passport.use(new GoogleStrategy({
     ...config.auth.strategies.google,
-    callbackURL     : '/api/auth/google/callback',
     profileFields: ['id', 'emails', 'name', 'displayName'],
     passReqToCallback: true
   }, strategies.social));
