@@ -52,7 +52,7 @@ export default class Chat extends Component {
     if (msg) {
       this.setState({ message: '' });
       socket.emit('MESSAGE', roomId, {
-        from: this.props.user && this.props.user.username || 'Anonymous',
+        author: this.props.user && this.props.user.username || 'Anonymous',
         text: msg
       });
     }
@@ -70,7 +70,7 @@ export default class Chat extends Component {
         <div>
           <ul style={ margin } ref="messages">
           {this.state.messages.map((msg) => {
-            return msg ? <li key={`chat.msg.${msg.id}`}>{msg.from}: {msg.text}</li> : '';
+            return msg ? <li key={`chat.msg.${msg._id}`}>{msg.author}: {msg.text}</li> : '';
           })}
           </ul>
           <form className="login-form" onSubmit={this.handleSubmit}>

@@ -11,6 +11,7 @@ require('./config/database');
 
 import * as actions from './actions/index';
 import configureAuth from './config/authentication';
+import initializeSockets from './actions/socket';
 
 const pretty = new PrettyError();
 const app = express();
@@ -61,36 +62,6 @@ app.use((req, res) => {
   }
 });
 
-function Room(id, bufferSize) {
-  this.id = id;
-  this.sockets = [];
-  this.bufferSize = bufferSize;
-  this.messages = new Array(bufferSize);
-  this.messageIndex = 0;
-  this.addSocket = socket => this.sockets.push(socket);
-  this.getId = () => this.id;
-  this.getMessages = () => this.messages;
-  this.addMessage = message => {
-    message.id = this.messageIndex;
-    this.messages[this.messageIndex % this.bufferSize] = message;
-    this.messageIndex++;
-  };
-}
-
-function Rooms() {
-  this.rooms = [];
-  this.getBySocket = socket => this.rooms.find(room => room.sockets.indexOf(socket) > -1);
-  this.getById = id => this.rooms.find(room => room.id === id);
-  this.create = (id, socket) => {
-    const room = new Room(id, 100);
-    room.addSocket(socket);
-    this.rooms.push(room);
-    return room;
-  }
-}
-
-const rooms = new Rooms();
-
 if (config.apiPort) {
   const runnable = app.listen(config.apiPort, (err) => {
     if (err) {
@@ -99,10 +70,12 @@ if (config.apiPort) {
     console.info('----\n==> 🌎  API is running on port %s', config.apiPort);
     console.info('==> 💻  Send requests to http://%s:%s', config.apiHost, config.apiPort);
   });
-
   const chat = io.of('/chat');
 
-  chat.on('connection', (socket) => {
+  initializeSockets(chat);
+  io.listen(runnable);
+
+  /*chat.on('connection', (socket) => {
 
     socket.on('JOIN_ROOM', id => {
       let room = rooms.getById(id);
@@ -123,9 +96,7 @@ if (config.apiPort) {
       chat.in(room.getId()).emit('MESSAGE', data);
     });
 
-  });
-
-  io.listen(runnable);
+  });*/
 } else {
   console.error('==>     ERROR: No PORT environment variable has been specified');
 }
