@@ -10,6 +10,7 @@ import {
   save as saveChatRooms,
   remove as removeChatRoom
 } from 'redux/modules/chatRooms';
+import { show as showAlertModal } from 'redux/modules/alert';
 
 @asyncConnect([{
   deferred: true,
@@ -22,13 +23,19 @@ import {
 @connect(state => ({
   user: state.auth.user,
   chatRooms: state.chatRooms.data
-}), { saveChatRooms, removeChatRoom, pushState: push })
+}), {
+  showAlertModal,
+  saveChatRooms,
+  removeChatRoom,
+  pushState: push
+})
 export default class Dashboard extends Component {
   static propTypes = {
     user: PropTypes.object,
     chatRooms: PropTypes.array,
     saveChatRooms: PropTypes.func,
     removeChatRoom: PropTypes.func,
+    showAlertModal: PropTypes.func,
     pushState: PropTypes.func
   };
 
@@ -38,18 +45,25 @@ export default class Dashboard extends Component {
 
   showChatModal() {
     this.setState({
+      ...this.state,
       modal: { ...this.state.modal, show: true }
     });
   }
 
   close() {
     this.setState({
+      ...this.state,
       modal: { data: null, show: false }
     });
   }
 
   render() {
-    const { user, chatRooms, saveChatRooms: saveAction } = this.props;
+    const {
+      user,
+      chatRooms,
+      saveChatRooms: saveAction,
+      showAlertModal: showAlert
+    } = this.props;
     const margin = { margin: '30px -15px' };
     const noMargin = { margin: 0 };
 
@@ -70,8 +84,21 @@ export default class Dashboard extends Component {
         <div>
           <div className="row">
           { chatRooms && (chatRooms.length && chatRooms.map(room => {
-            const editAction = event => { event.stopPropagation(); this.setState({ modal: { data: room, show: true }}); };
-            const removeAction = event => { event.stopPropagation(); this.props.removeChatRoom(room._id); };
+            const editAction = event => {
+              event.stopPropagation();
+              this.setState({
+                ...this.state,
+                modal: { data: room, show: true }
+              });
+            };
+            const removeAction = event => {
+              event.stopPropagation();
+              showAlert({
+                title: `Do you want to remove "${room.title}" Room?`,
+                size: 'sm',
+                accept: () => this.props.removeChatRoom(room._id)
+              });
+            };
             const redirectAction = () => this.props.pushState(`/chat/${ room._id }`);
             return (
                 <div className="col-md-4" key={ room._id }>

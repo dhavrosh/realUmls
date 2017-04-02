@@ -7,6 +7,7 @@ import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import Helmet from 'react-helmet';
 import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
+import { AlertModal } from 'components';
 import { push } from 'react-router-redux';
 import config from '../../config';
 import { asyncConnect } from 'redux-async-connect';
@@ -23,12 +24,17 @@ import { asyncConnect } from 'redux-async-connect';
   }
 }])
 @connect(
-  state => ({ user: state.auth.user }),
-  {logout, pushState: push})
+  state => ({
+    user: state.auth.user,
+    alert: state.alert
+  }),
+  { logout, pushState: push }
+)
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
     user: PropTypes.object,
+    alert: PropTypes.object,
     logout: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired
   };
@@ -53,7 +59,7 @@ export default class App extends Component {
   };
 
   render() {
-    const {user} = this.props;
+    const { user, alert } = this.props;
     const styles = require('./App.scss');
 
     return (
@@ -102,7 +108,9 @@ export default class App extends Component {
         <div className="container" style={{ marginTop: 70 }}>
           {this.props.children}
         </div>
-        {/* <InfoBar/> */}
+
+
+        <AlertModal { ...alert }/>
       </div>
     );
   }

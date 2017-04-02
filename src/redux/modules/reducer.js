@@ -7,7 +7,7 @@ import { pagination } from 'violet-paginator';
 import auth from './auth';
 import counter from './counter';
 import {reducer as form} from 'redux-form';
-import info from './info';
+import alert from './alert';
 import widgets from './widgets';
 import chatRooms from './chatRooms';
 
@@ -22,7 +22,7 @@ export default combineReducers({
     counter2: counter,
     counter3: counter
   }),
-  info,
+  alert,
   pagination,
   widgets
 });
