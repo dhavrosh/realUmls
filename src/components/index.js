@@ -13,4 +13,5 @@ export WidgetForm from './WidgetForm/WidgetForm';
 export ChatPanel from './Chat/Panel';
 export ChatModal from './Chat/Modal';
 export AlertModal from './Alert/Modal';
+export MemberFrom from './MemberForm/MemberForm';
 

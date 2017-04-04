@@ -10,8 +10,26 @@ export default class ChatModal extends Component {
   };
 
   state = {
+    ...this.props.data,
     error: { message: '' }
   };
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props !== nextProps) {
+      this.setState({
+        ...nextProps.data,
+        error: { message: '' }
+      });
+    }
+  }
+
+  addMember() {
+    const memberObj = { email: '', role: '' };
+    this.setState({
+      ...this.state,
+      members: [...this.state.members, memberObj]
+    });
+  }
 
   saveChatRoom() {
     const title = this.refs.title;
@@ -20,6 +38,17 @@ export default class ChatModal extends Component {
     if (title.value && description.value) {
       const data = this.props.data;
       const args = [title.value, description.value];
+      const members = [];
+
+      this.state.members.forEach((member, index) => {
+        const key = `member-${index}`;
+        const email = this.refs[`${key}-email`].value;
+        const role = this.refs[`${key}-role`].value;
+
+        members.push({ email, role });
+      });
+
+      args.push(members);
 
       if (data && data._id) {
         args.push(data._id);
@@ -42,7 +71,8 @@ export default class ChatModal extends Component {
   }
 
   render() {
-    const { showModal, close, data } = this.props;
+    const { showModal, close } = this.props;
+    const { title, description, members } = this.state;
     const buttonGroup = { marginTop: 30 };
     const notEmphatic = { border: 'none' };
     const lined = { lineHeight: 1 };
@@ -70,7 +100,7 @@ export default class ChatModal extends Component {
                   ref="title"
                   type="text"
                   placeholder="Enter your title"
-                  defaultValue={ data && data.title }
+                  defaultValue={ title }
                 />
               </div>
               <div className="form-group">
@@ -80,8 +110,22 @@ export default class ChatModal extends Component {
                   className="form-control"
                   ref="description"
                   placeholder="Enter your description"
-                  defaultValue={ data && data.description }
+                  defaultValue={ description }
                 />
+              </div>
+              <div className="form-group">
+                <label htmlFor="members" style={ lined }>Members:</label>
+                <button onClick={ this.addMember.bind(this) }>Add</button>
+                { members.map((member, index) => {
+                  const key = `member-${index}`;
+                  return (
+                    <div key={key}>
+                      <input type="text" ref={`${key}-email`} placeholder="Enter member email" defaultValue={member.email}/>
+                      <input type="text" ref={`${key}-role`} placeholder="Choose role" defaultValue={member.role}/>
+                    </div>
+                  );
+                })
+                }
               </div>
               <div style={ buttonGroup }>
                 <button className="btn btn-success pull-right" onClick={ this.saveChatRoom.bind(this) } >Save</button>

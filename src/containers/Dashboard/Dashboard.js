@@ -40,13 +40,21 @@ export default class Dashboard extends Component {
   };
 
   state = {
-    modal: { show: false, data: null }
+    modal: { show: false, data: this.getEmptyDataObj() }
   };
+
+  getEmptyDataObj() {
+    return {
+      title: '',
+      description: '',
+      members: []
+    };
+  }
 
   showChatModal() {
     this.setState({
       ...this.state,
-      modal: { ...this.state.modal, show: true }
+      modal: { data: this.getEmptyDataObj(), show: true }
     });
   }
 

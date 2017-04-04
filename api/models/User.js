@@ -9,7 +9,7 @@ const UserSchema = new Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
   provider: String,
-  profileId: String
+  profileId: String,
 });
 
 UserSchema.pre('save', function (next) {
@@ -33,6 +33,4 @@ UserSchema.methods.comparePassword = function(candidatePassword) {
   return bcrypt.compareSync(candidatePassword, this.password);
 };
 
-mongoose.model('User', UserSchema);
-
-export default mongoose.model('User');
+export default mongoose.model('User', UserSchema);

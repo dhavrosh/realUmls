@@ -7,9 +7,13 @@ const SAVE_FAIL = 'chatRooms/SAVE_FAIL';
 const REMOVE = 'chatRooms/REMOVE';
 const REMOVE_SUCCESS = 'chatRooms/REMOVE_SUCCESS';
 const REMOVE_FAIL = 'chatRooms/REMOVE_FAIL';
+const EDIT_START = 'chatRooms/EDIT_START';
+const EDIT_STOP = 'chatRooms/EDIT_STOP';
 
 const initialState = {
   loaded: false,
+  editing: {},
+  saveError: {}
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -69,6 +73,22 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         removeError: action.error
       } : state;
+    case EDIT_START:
+      return {
+        ...state,
+        editing: {
+          ...state.editing,
+          [action.id]: true
+        }
+      };
+    case EDIT_STOP:
+      return {
+        ...state,
+        editing: {
+          ...state.editing,
+          [action.id]: false
+        }
+      };
     default:
       return state;
   }
@@ -85,14 +105,14 @@ export function load() {
   };
 }
 
-export function save(title, description, id) {
+export function save(title, description, members, id) {
   const url = id
     ? `/chatRoom/save/${id}` : '/chatRoom/save';
 
   return {
     types: [SAVE, SAVE_SUCCESS, SAVE_FAIL],
     promise: (client) => client.post(url, {
-      data: { title, description }
+      data: { title, description, members }
     })
   };
 }
@@ -102,4 +122,12 @@ export function remove(id) {
     types: [REMOVE, REMOVE_SUCCESS, REMOVE_FAIL],
     promise: (client) => client.get(`/chatRoom/remove/${id}`)
   };
+}
+
+export function editStart(id) {
+  return { type: EDIT_START, id };
+}
+
+export function editStop(id) {
+  return { type: EDIT_STOP, id };
 }
