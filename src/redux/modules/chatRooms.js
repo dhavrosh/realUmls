@@ -124,6 +124,7 @@ export function remove(id) {
   };
 }
 
+// TODO: use for members form
 export function editStart(id) {
   return { type: EDIT_START, id };
 }

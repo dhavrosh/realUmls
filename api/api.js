@@ -39,7 +39,8 @@ app.use((req, res) => {
   const privateAction = splittedUrlPath[0] !== 'auth';
 
   if (action) {
-    if (privateAction && !req.isAuthenticated()) res.status(401).end('UNAUTHORIZED');
+    // TODO: add socket authentication & uncomment
+    // if (privateAction && !req.isAuthenticated()) res.status(401).end('UNAUTHORIZED');
 
     action(req, params)
       .then((result) => {
@@ -74,29 +75,6 @@ if (config.apiPort) {
 
   initializeSockets(chat);
   io.listen(runnable);
-
-  /*chat.on('connection', (socket) => {
-
-    socket.on('JOIN_ROOM', id => {
-      let room = rooms.getById(id);
-
-      if (!room) {
-        room = rooms.create(id, socket.id);
-      } else room.addSocket(socket.id);
-
-      socket.join(id);
-      socket.emit('INIT', room.getMessages());
-      // socket.broadcast.to(id).emit('NEW_PARTICIPANT');
-    });
-
-    socket.on('MESSAGE', (id, data) => {
-      const room = rooms.getById(id);
-
-      room.addMessage(data);
-      chat.in(room.getId()).emit('MESSAGE', data);
-    });
-
-  });*/
 } else {
   console.error('==>     ERROR: No PORT environment variable has been specified');
 }

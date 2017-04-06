@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Modal from 'react-bootstrap/lib/Modal';
+import { roles } from '../../../constants';
 
 export default class ChatModal extends Component {
   static propTypes = {
@@ -28,6 +29,15 @@ export default class ChatModal extends Component {
     this.setState({
       ...this.state,
       members: [...this.state.members, memberObj]
+    });
+  }
+
+  removeMember(position) {
+    this.state.members.splice(position, 1);
+
+    this.setState({
+      ...this.state,
+      members: [...this.state.members]
     });
   }
 
@@ -122,6 +132,7 @@ export default class ChatModal extends Component {
                     <div key={key}>
                       <input type="text" ref={`${key}-email`} placeholder="Enter member email" defaultValue={member.email}/>
                       <input type="text" ref={`${key}-role`} placeholder="Choose role" defaultValue={member.role}/>
+                      <button onClick={ () => this.removeMember(index) }>Remove</button>
                     </div>
                   );
                 })

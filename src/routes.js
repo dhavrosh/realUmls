@@ -35,9 +35,7 @@ export default (store) => {
     if (user) replace('/');
   };
 
-  /**
-   * Please keep routes in alphabetical order
-   */
+
   return (
     <Route path="/" component={App}>
       { /* Home (main) route */ }
@@ -48,6 +46,7 @@ export default (store) => {
         <Route path="dashboard" component={Dashboard}/>
       </Route>
 
+       {/* TODO: add requireLogin */}
       <Route path="chat/:id" component={Chat}/>
 
       <Route onEnter={requireAnonymous}>
