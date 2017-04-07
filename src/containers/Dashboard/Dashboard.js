@@ -5,24 +5,37 @@ import { push } from 'react-router-redux';
 import { asyncConnect } from 'redux-async-connect';
 import { ChatPanel, ChatModal } from 'components';
 import {
-  isLoaded,
+  isLoaded as areRoomsLoaded,
   load as loadChatRooms,
   save as saveChatRooms,
   remove as removeChatRoom
 } from 'redux/modules/chatRooms';
+import {
+  isLoaded as areRolesLoaded,
+  load as loadRoles
+} from 'redux/modules/roles';
 import { show as showAlertModal } from 'redux/modules/alert';
 
 @asyncConnect([{
   deferred: true,
   promise: ({store: {dispatch, getState}}) => {
-    if (!isLoaded(getState())) {
-      return dispatch(loadChatRooms());
+    const promises = [];
+
+    if (!areRoomsLoaded(getState())) {
+      promises.push(dispatch(loadChatRooms()));
     }
+
+    if (!areRolesLoaded(getState())) {
+      promises.push(dispatch(loadRoles()));
+    }
+
+    return Promise.all(promises);
   }
 }])
 @connect(state => ({
   user: state.auth.user,
-  chatRooms: state.chatRooms.data
+  chatRooms: state.chatRooms.data,
+  roles: state.roles.data
 }), {
   showAlertModal,
   saveChatRooms,
@@ -36,7 +49,8 @@ export default class Dashboard extends Component {
     saveChatRooms: PropTypes.func,
     removeChatRoom: PropTypes.func,
     showAlertModal: PropTypes.func,
-    pushState: PropTypes.func
+    pushState: PropTypes.func,
+    roles: PropTypes.array.isRequired
   };
 
   state = {
@@ -68,6 +82,7 @@ export default class Dashboard extends Component {
   render() {
     const {
       user,
+      roles,
       chatRooms,
       saveChatRooms: saveAction,
       showAlertModal: showAlert
@@ -128,6 +143,7 @@ export default class Dashboard extends Component {
           data={ this.state.modal.data }
           close={ this.close.bind(this) }
           saveChatRoom={ saveAction }
+          roles={ roles }
         />
       </div>
     );

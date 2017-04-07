@@ -1,13 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import Modal from 'react-bootstrap/lib/Modal';
-import { roles } from '../../../constants';
 
 export default class ChatModal extends Component {
   static propTypes = {
     saveChatRoom: PropTypes.func.isRequired,
     showModal: PropTypes.bool.isRequired,
     data: PropTypes.object,
-    close: PropTypes.func.isRequired
+    close: PropTypes.func.isRequired,
+    roles: PropTypes.array.isRequired
   };
 
   state = {
@@ -21,6 +21,8 @@ export default class ChatModal extends Component {
         ...nextProps.data,
         error: { message: '' }
       });
+      // this.reloadMembers();
+      console.log(this.state);
     }
   }
 
@@ -35,6 +37,22 @@ export default class ChatModal extends Component {
   removeMember(position) {
     this.state.members.splice(position, 1);
 
+    this.setState({
+      ...this.state,
+      members: [...this.state.members]
+    });
+  }
+
+  selectRole(memberPosition, role) {
+    const member = this.state.members[memberPosition];
+    member.role = role;
+    this.setState({
+      ...this.state,
+      members: [...this.state.members]
+    });
+  }
+
+  reloadMembers() {
     this.setState({
       ...this.state,
       members: [...this.state.members]
@@ -81,7 +99,7 @@ export default class ChatModal extends Component {
   }
 
   render() {
-    const { showModal, close } = this.props;
+    const { showModal, close, roles } = this.props;
     const { title, description, members } = this.state;
     const buttonGroup = { marginTop: 30 };
     const notEmphatic = { border: 'none' };
@@ -131,8 +149,15 @@ export default class ChatModal extends Component {
                   return (
                     <div key={key}>
                       <input type="text" ref={`${key}-email`} placeholder="Enter member email" defaultValue={member.email}/>
-                      <input type="text" ref={`${key}-role`} placeholder="Choose role" defaultValue={member.role}/>
-                      <button onClick={ () => this.removeMember(index) }>Remove</button>
+                      { member.role }
+                      <select
+                        ref={`${key}-role`}
+                        placeholder="Choose role"
+                        value={member.role}
+                        onChange={event => this.selectRole(index, event.target.value)}>
+                        { roles.map(role => <option key={`role-${role.title}`}>{ role.title }</option>) }
+                      </select>
+                      <button onClick={() => this.removeMember(index)}>Remove</button>
                     </div>
                   );
                 })
