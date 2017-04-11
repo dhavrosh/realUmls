@@ -5,13 +5,8 @@
  *
  */
 
-export CounterButton from './CounterButton/CounterButton';
-export GithubButton from './GithubButton/GithubButton';
-export MiniInfoBar from './MiniInfoBar/MiniInfoBar';
-export SurveyForm from './SurveyForm/SurveyForm';
-export WidgetForm from './WidgetForm/WidgetForm';
-export ChatPanel from './Chat/Panel';
-export ChatModal from './Chat/Modal';
+export RoomPanel from './Room/Panel';
+export RoomModal from './Room/Modal';
 export AlertModal from './Alert/Modal';
 export MemberFrom from './MemberForm/MemberForm';
 

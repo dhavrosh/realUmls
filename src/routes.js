@@ -3,16 +3,12 @@ import {IndexRoute, Route} from 'react-router';
 import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
 import {
     App,
-    Chat,
+    Room,
     Home,
-    /* Widgets,
-    About, */
     Login,
     Dashboard,
     Register,
-    /* Survey, */
     NotFound,
-    /* Pagination, */
   } from 'containers';
 
 export default (store) => {
@@ -47,18 +43,12 @@ export default (store) => {
       </Route>
 
        {/* TODO: add requireLogin */}
-      <Route path="chat/:id" component={Chat}/>
+      <Route path="room/:id" component={Room}/>
 
       <Route onEnter={requireAnonymous}>
         <Route path="login" component={Login}/>
         <Route path="signup" component={Register}/>
       </Route>
-
-      { /* Routes */ }
-      {/* <Route path="about" component={About}/> */}
-      {/* <Route path="pagination" component={Pagination}/>
-      <Route path="survey" component={Survey}/>
-      <Route path="widgets" component={Widgets}/> */}
 
       { /* Catch all route */ }
       <Route path="*" component={NotFound} status={404} />

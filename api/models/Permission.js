@@ -3,17 +3,13 @@ import Role from '../models/Role';
 import Resource from '../models/Resource';
 import { roles, resources, permissions } from '../constants'
 
-const PermissionObjSchema = new mongoose.Schema({
+const PermissionSchema = new mongoose.Schema({
+  role: { type: String, required: true },
+  resource: { type: String, required: true },
   create: { type: Boolean, required: true, default: false },
   read: { type: Boolean, required: true, default: true },
   write: { type: Boolean, required: true, default: false },
   delete: { type: Boolean, required: true, default: false }
-});
-
-const PermissionSchema = new mongoose.Schema({
-  role: { type: String, required: true },
-  resource: { type: String, required: true },
-  permission: PermissionObjSchema
 });
 
 const Permission = mongoose.model('Permission', PermissionSchema);
@@ -32,30 +28,24 @@ async function initializePermissions() {
     [userResources.chat._id]: [
       {
         role: userRoles.creator._id,
-        permission: {
-          create: true,
-          read: true,
-          write: true,
-          delete: true
-        }
+        create: true,
+        read: true,
+        write: true,
+        delete: true
       },
       {
         role: userRoles.participant._id,
-        permission: {
-          create: false,
-          read: true,
-          write: true,
-          delete: false
-        }
+        create: false,
+        read: true,
+        write: true,
+        delete: false
       },
       {
         role: userRoles.viewer._id,
-        permission: {
-          create: false,
-          read: true,
-          write: false,
-          delete: false
-        }
+        create: false,
+        read: true,
+        write: false,
+        delete: false
       }
     ]
   };

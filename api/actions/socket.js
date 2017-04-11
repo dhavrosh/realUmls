@@ -1,4 +1,4 @@
-import initChatRoomSocket from './chatRoom/initSocket';
+import initChatRoomSocket from './room/initSocket';
 
 export default function initializeSockets(io) {
   io.on('connection', socket => {

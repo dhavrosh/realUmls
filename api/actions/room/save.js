@@ -1,18 +1,18 @@
 import mongoose from 'mongoose';
-import ChatRoom from '../../models/ChatRoom';
+import Room from '../../models/Room';
 
 export default function save(req, [id]) {
   return new Promise((resolve, reject) => {
-    const saveChatRoom = async () => {
+    const saveRoom = async () => {
         const userId = req.user._id;
         const roomId = id || mongoose.Types.ObjectId();
         const update = { ...req.body, creator: userId };
         const options = { new: true, upsert: true };
-        const chatRoom = await ChatRoom.findByIdAndUpdate(roomId, update, options);
+        const room = await Room.findByIdAndUpdate(roomId, update, options);
 
-        resolve(chatRoom);
+        resolve(room);
     };
 
-    saveChatRoom().catch(reject);
+    saveRoom().catch(reject);
   });
 }

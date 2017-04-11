@@ -5,7 +5,8 @@ import {reducer as reduxAsyncConnect} from 'redux-async-connect';
 import auth from './auth';
 import {reducer as form} from 'redux-form';
 import alert from './alert';
-import chatRooms from './chatRooms';
+import rooms from './rooms';
+import room from './room';
 import roles from './roles';
 
 export default combineReducers({
@@ -13,7 +14,8 @@ export default combineReducers({
   reduxAsyncConnect,
   auth,
   form,
-  chatRooms,
+  rooms,
+  room,
   alert,
   roles
 });

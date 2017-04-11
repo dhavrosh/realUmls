@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import Modal from 'react-bootstrap/lib/Modal';
 
-export default class ChatModal extends Component {
+export default class RoomModal extends Component {
   static propTypes = {
-    saveChatRoom: PropTypes.func.isRequired,
+    save: PropTypes.func.isRequired,
     showModal: PropTypes.bool.isRequired,
     data: PropTypes.object,
     close: PropTypes.func.isRequired,
@@ -21,8 +21,6 @@ export default class ChatModal extends Component {
         ...nextProps.data,
         error: { message: '' }
       });
-      // this.reloadMembers();
-      console.log(this.state);
     }
   }
 
@@ -59,7 +57,7 @@ export default class ChatModal extends Component {
     });
   }
 
-  saveChatRoom() {
+  save() {
     const title = this.refs.title;
     const description = this.refs.description;
 
@@ -71,7 +69,8 @@ export default class ChatModal extends Component {
       this.state.members.forEach((member, index) => {
         const key = `member-${index}`;
         const email = this.refs[`${key}-email`].value;
-        const role = this.refs[`${key}-role`].value;
+        const roleTitle = this.refs[`${key}-role`].value;
+        const role = this.props.roles.find(item => item.title === roleTitle)._id;
 
         members.push({ email, role });
       });
@@ -82,7 +81,7 @@ export default class ChatModal extends Component {
         args.push(data._id);
       }
 
-      this.props.saveChatRoom(...args);
+      this.props.save(...args);
       this.props.close();
       this.setState({ error: null });
 
@@ -164,7 +163,7 @@ export default class ChatModal extends Component {
                 }
               </div>
               <div style={ buttonGroup }>
-                <button className="btn btn-success pull-right" onClick={ this.saveChatRoom.bind(this) } >Save</button>
+                <button className="btn btn-success pull-right" onClick={ this.save.bind(this) } >Save</button>
                 <button className="btn btn-link pull-right" onClick={ this.close.bind(this) }>Cancel</button>
               </div>
             </div>

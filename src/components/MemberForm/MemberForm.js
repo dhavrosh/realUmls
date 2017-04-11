@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { reduxForm } from 'redux-form';
 import memberValidation, { userRoles } from './memberValidation';
-import * as widgetActions from 'redux/modules/widgets';
+import * as widgetActions from 'redux/modules/rooms';
 
 @connect(
   state => ({
@@ -33,7 +33,7 @@ export default class MemberForm extends Component {
   render() {
     const { editStop, fields: {email, role}, formKey, handleSubmit, invalid,
       pristine, save, submitting, saveError: { [formKey]: saveError }, values } = this.props;
-    const styles = require('containers/Widgets/Widgets.scss');
+    const styles = require('containers/App/App.scss');
     return (
       <tr className={submitting ? styles.saving : ''}>
        {/* <td className={styles.idCol}>{id.value}</td>*/}

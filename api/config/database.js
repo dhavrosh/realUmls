@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import config from '../../src/config';
 
 require('../models/User');
-require('../models/ChatRoom');
+require('../models/Room');
 require('../models/Role');
 require('../models/Resource');
 require('../models/Permission');

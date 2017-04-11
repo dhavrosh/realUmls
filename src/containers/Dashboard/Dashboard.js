@@ -3,13 +3,8 @@ import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 import { push } from 'react-router-redux';
 import { asyncConnect } from 'redux-async-connect';
-import { ChatPanel, ChatModal } from 'components';
-import {
-  isLoaded as areRoomsLoaded,
-  load as loadChatRooms,
-  save as saveChatRooms,
-  remove as removeChatRoom
-} from 'redux/modules/chatRooms';
+import { RoomPanel, RoomModal } from 'components';
+import { loadOwn, save, remove } from 'redux/modules/rooms';
 import {
   isLoaded as areRolesLoaded,
   load as loadRoles
@@ -21,9 +16,8 @@ import { show as showAlertModal } from 'redux/modules/alert';
   promise: ({store: {dispatch, getState}}) => {
     const promises = [];
 
-    if (!areRoomsLoaded(getState())) {
-      promises.push(dispatch(loadChatRooms()));
-    }
+    // if (!areRoomsLoaded(getState()))
+    promises.push(dispatch(loadOwn()));
 
     if (!areRolesLoaded(getState())) {
       promises.push(dispatch(loadRoles()));
@@ -34,20 +28,20 @@ import { show as showAlertModal } from 'redux/modules/alert';
 }])
 @connect(state => ({
   user: state.auth.user,
-  chatRooms: state.chatRooms.data,
+  rooms: state.rooms.data,
   roles: state.roles.data
 }), {
+  save,
+  remove,
   showAlertModal,
-  saveChatRooms,
-  removeChatRoom,
   pushState: push
 })
 export default class Dashboard extends Component {
   static propTypes = {
     user: PropTypes.object,
-    chatRooms: PropTypes.array,
-    saveChatRooms: PropTypes.func,
-    removeChatRoom: PropTypes.func,
+    rooms: PropTypes.array,
+    save: PropTypes.func,
+    remove: PropTypes.func,
     showAlertModal: PropTypes.func,
     pushState: PropTypes.func,
     roles: PropTypes.array.isRequired
@@ -65,7 +59,7 @@ export default class Dashboard extends Component {
     };
   }
 
-  showChatModal() {
+  showRoomModal() {
     this.setState({
       ...this.state,
       modal: { data: this.getEmptyDataObj(), show: true }
@@ -83,8 +77,8 @@ export default class Dashboard extends Component {
     const {
       user,
       roles,
-      chatRooms,
-      saveChatRooms: saveAction,
+      rooms,
+      save: saveAction,
       showAlertModal: showAlert
     } = this.props;
     const margin = { margin: '30px -15px' };
@@ -99,14 +93,14 @@ export default class Dashboard extends Component {
           </div>
           <div className="col-md-3 col-sm-3 col-xs-3">
             <button className="btn btn-info pull-right"
-                    onClick={ this.showChatModal.bind(this) }>
+                    onClick={ this.showRoomModal.bind(this) }>
               Create
             </button>
           </div>
         </div>
         <div>
           <div className="row">
-          { chatRooms && (chatRooms.length && chatRooms.map(room => {
+          { rooms && (rooms.length && rooms.map(room => {
             const editAction = event => {
               event.stopPropagation();
               this.setState({
@@ -119,30 +113,30 @@ export default class Dashboard extends Component {
               showAlert({
                 title: `Do you want to remove "${room.title}" Room?`,
                 size: 'sm',
-                accept: () => this.props.removeChatRoom(room._id)
+                accept: () => this.props.remove(room._id)
               });
             };
-            const redirectAction = () => this.props.pushState(`/chat/${ room._id }`);
+            const redirectAction = () => this.props.pushState(`/room/${ room._id }`);
             return (
                 <div className="col-md-4" key={ room._id }>
-                    <ChatPanel
+                    <RoomPanel
                       title={ room.title }
                       edit={ editAction }
                       remove={ removeAction }
                       redirect={ redirectAction }>
                       { room.description }
-                    </ChatPanel>
+                    </RoomPanel>
                 </div>
              );
-          }) || <div className="col-md-12">Press 'Create' to add chats to your Dashboard</div>)
+          }) || <div className="col-md-12">Press 'Create' to add rooms to your Dashboard</div>)
           }
           </div>
         </div>
-        <ChatModal
+        <RoomModal
           showModal={ this.state.modal.show }
           data={ this.state.modal.data }
           close={ this.close.bind(this) }
-          saveChatRoom={ saveAction }
+          save={ saveAction }
           roles={ roles }
         />
       </div>

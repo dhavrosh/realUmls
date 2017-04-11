@@ -11,7 +11,7 @@ const MemberSchema = new mongoose.Schema({
   role: { type: String, required: true }
 });
 
-const ChatRoomSchema = new mongoose.Schema({
+const RoomSchema = new mongoose.Schema({
   title: { type: String, required: true },
   creator: { type: String, required: true },
   members: [MemberSchema],
@@ -19,4 +19,4 @@ const ChatRoomSchema = new mongoose.Schema({
   description: String,
 });
 
-export default mongoose.model('ChatRoom', ChatRoomSchema);
+export default mongoose.model('Room', RoomSchema);

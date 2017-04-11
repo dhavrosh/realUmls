@@ -1,14 +1,36 @@
-import React, {Component, PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
+import { load } from 'redux/modules/room';
+import { asyncConnect } from 'redux-async-connect';
+import RoleAwareComponent from 'helpers/RoleAwareComponent';
 
-@connect(state => ({ user: state.auth.user }))
-export default class Chat extends Component {
+@asyncConnect([{
+  promise: ({
+    store: { dispatch },
+    params: { id },
+    location: { search }}
+  ) => {
+    return dispatch(load(id, search));
+  }
+}])
+@connect(
+  state => ({
+    user: state.auth.user,
+    member: state.rooms.member
+  })
+)
+export default class Room extends RoleAwareComponent {
 
   static propTypes = {
     user: PropTypes.object,
+    member: PropTypes.object,
     params: PropTypes.object
   };
+
+  constructor(props) {
+    super(props);
+  }
 
   state = {
     message: '',
@@ -19,7 +41,6 @@ export default class Chat extends Component {
     if (socket) {
       socket.emit('JOIN_ROOM', this.props.params.id);
 
-      socket.on('NEW_PARTICIPANT', () => console.log('New Participant'));
       socket.on('MESSAGE', this.onMessageReceived);
       socket.on('INIT', this.onInit);
     }
@@ -28,6 +49,7 @@ export default class Chat extends Component {
   componentWillUnmount() {
     if (socket) {
       socket.removeListener('MESSAGE', this.onMessageReceived);
+      socket.removeListener('INIT', this.onInit);
     }
   }
 
@@ -59,18 +81,20 @@ export default class Chat extends Component {
   };
 
   render() {
-    const style = require('./Chat.scss');
+    const style = require('./Room.scss');
     const margin = { marginTop: 30 };
 
+    // this.has('ROLE');
+
     return (
-      <div className={style.chat}>
-        <Helmet title="Chat"/>
-        <h1 className={style}>Chat</h1>
+      <div className={style.room}>
+        <Helmet title="Room"/>
+        <h1 className={style}>Room</h1>
 
         <div>
           <ul style={ margin } ref="messages">
           {this.state.messages.map((msg) => {
-            return msg ? <li key={`chat.msg.${msg._id}`}>{msg.author}: {msg.text}</li> : '';
+            return msg ? <li key={`room.msg.${msg._id}`}>{msg.author}: {msg.text}</li> : '';
           })}
           </ul>
           <form className="login-form" onSubmit={this.handleSubmit}>

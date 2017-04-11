@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Panel from 'react-bootstrap/lib/Panel';
 
-export default class ChatPanel extends Component {
+export default class RoomPanel extends Component {
   static propTypes = {
     title: PropTypes.string,
     children: PropTypes.string.isRequired,

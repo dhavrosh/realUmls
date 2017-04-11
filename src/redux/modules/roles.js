@@ -1,6 +1,6 @@
-const LOAD = 'roles/LOAD';
-const LOAD_SUCCESS = 'roles/LOAD_SUCCESS';
-const LOAD_FAIL = 'roles/LOAD_FAIL';
+const LOAD = 'role/LOAD';
+const LOAD_SUCCESS = 'role/LOAD_SUCCESS';
+const LOAD_FAIL = 'role/LOAD_FAIL';
 
 const initialState = {
   loaded: false

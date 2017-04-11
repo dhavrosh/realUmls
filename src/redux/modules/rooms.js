@@ -1,14 +1,12 @@
-const LOAD = 'chatRooms/LOAD';
-const LOAD_SUCCESS = 'chatRooms/LOAD_SUCCESS';
-const LOAD_FAIL = 'chatRooms/LOAD_FAIL';
-const SAVE = 'chatRooms/SAVE';
-const SAVE_SUCCESS = 'chatRooms/SAVE_SUCCESS';
-const SAVE_FAIL = 'chatRooms/SAVE_FAIL';
-const REMOVE = 'chatRooms/REMOVE';
-const REMOVE_SUCCESS = 'chatRooms/REMOVE_SUCCESS';
-const REMOVE_FAIL = 'chatRooms/REMOVE_FAIL';
-const EDIT_START = 'chatRooms/EDIT_START';
-const EDIT_STOP = 'chatRooms/EDIT_STOP';
+const LOAD = 'rooms/LOAD';
+const LOAD_SUCCESS = 'rooms/LOAD_SUCCESS';
+const LOAD_FAIL = 'rooms/LOAD_FAIL';
+const SAVE = 'rooms/SAVE';
+const SAVE_SUCCESS = 'rooms/SAVE_SUCCESS';
+const SAVE_FAIL = 'rooms/SAVE_FAIL';
+const REMOVE = 'rooms/REMOVE';
+const REMOVE_SUCCESS = 'rooms/REMOVE_SUCCESS';
+const REMOVE_FAIL = 'rooms/REMOVE_FAIL';
 
 const initialState = {
   loaded: false,
@@ -73,41 +71,24 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         removeError: action.error
       } : state;
-    case EDIT_START:
-      return {
-        ...state,
-        editing: {
-          ...state.editing,
-          [action.id]: true
-        }
-      };
-    case EDIT_STOP:
-      return {
-        ...state,
-        editing: {
-          ...state.editing,
-          [action.id]: false
-        }
-      };
     default:
       return state;
   }
 }
 
 export function isLoaded(globalState) {
-  return globalState.chatRooms && globalState.chatRooms.loaded;
+  return globalState.rooms && globalState.rooms.loaded;
 }
 
-export function load() {
+export function loadOwn() {
   return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
-    promise: (client) => client.get('/chatRoom/load')
+    promise: (client) => client.get('/room/loadOwn')
   };
 }
 
 export function save(title, description, members, id) {
-  const url = id
-    ? `/chatRoom/save/${id}` : '/chatRoom/save';
+  const url = id ? `/room/save/${id}` : '/room/save';
 
   return {
     types: [SAVE, SAVE_SUCCESS, SAVE_FAIL],
@@ -120,15 +101,7 @@ export function save(title, description, members, id) {
 export function remove(id) {
   return {
     types: [REMOVE, REMOVE_SUCCESS, REMOVE_FAIL],
-    promise: (client) => client.get(`/chatRoom/remove/${id}`)
+    promise: (client) => client.get(`/room/remove/${id}`)
   };
 }
 
-// TODO: use for members form
-export function editStart(id) {
-  return { type: EDIT_START, id };
-}
-
-export function editStop(id) {
-  return { type: EDIT_STOP, id };
-}
