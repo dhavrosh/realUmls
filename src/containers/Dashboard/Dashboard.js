@@ -4,7 +4,12 @@ import Helmet from 'react-helmet';
 import { push } from 'react-router-redux';
 import { asyncConnect } from 'redux-async-connect';
 import { RoomPanel, RoomModal } from 'components';
-import { loadOwn, save, remove } from 'redux/modules/rooms';
+import {
+  isLoaded as areRoomsLoaded,
+  loadOwn,
+  save,
+  remove
+} from 'redux/modules/rooms';
 import {
   isLoaded as areRolesLoaded,
   load as loadRoles
@@ -16,8 +21,9 @@ import { show as showAlertModal } from 'redux/modules/alert';
   promise: ({store: {dispatch, getState}}) => {
     const promises = [];
 
-    // if (!areRoomsLoaded(getState()))
-    promises.push(dispatch(loadOwn()));
+    if (!areRoomsLoaded(getState())) {
+      promises.push(dispatch(loadOwn()));
+    }
 
     if (!areRolesLoaded(getState())) {
       promises.push(dispatch(loadRoles()));
@@ -137,7 +143,7 @@ export default class Dashboard extends Component {
           data={ this.state.modal.data }
           close={ this.close.bind(this) }
           save={ saveAction }
-          roles={ roles }
+          roles={ roles && roles.filter(role => role.title !== 'creator') || [] }
         />
       </div>
     );

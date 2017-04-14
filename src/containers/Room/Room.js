@@ -17,14 +17,17 @@ import RoleAwareComponent from 'helpers/RoleAwareComponent';
 @connect(
   state => ({
     user: state.auth.user,
-    member: state.rooms.member
+    room: state.room.data,
+    error: state.room.loadError,
+    permission: state.room.permission
   })
 )
 export default class Room extends RoleAwareComponent {
 
   static propTypes = {
     user: PropTypes.object,
-    member: PropTypes.object,
+    room: PropTypes.object,
+    permission: PropTypes.object,
     params: PropTypes.object
   };
 
@@ -81,15 +84,14 @@ export default class Room extends RoleAwareComponent {
   };
 
   render() {
+    const { room, error } = this.props;
     const style = require('./Room.scss');
     const margin = { marginTop: 30 };
 
-    // this.has('ROLE');
-
-    return (
+    return error ? (<div>ERROR: {error.message}</div>) : (
       <div className={style.room}>
         <Helmet title="Room"/>
-        <h1 className={style}>Room</h1>
+        <h1 className={style}>{ `Room ${room.title}` }</h1>
 
         <div>
           <ul style={ margin } ref="messages">
@@ -97,12 +99,17 @@ export default class Room extends RoleAwareComponent {
             return msg ? <li key={`room.msg.${msg._id}`}>{msg.author}: {msg.text}</li> : '';
           })}
           </ul>
-          <form className="login-form" onSubmit={this.handleSubmit}>
-            <input type="text" ref="message" placeholder="Enter your message"
-             value={this.state.message}
-             onChange={ (event) => this.setState({ message: event.target.value }) }/>
-            <button className="btn" onClick={ this.handleSubmit }>Send</button>
-          </form>
+          { this.hasPermission('write') &&
+            <form className="login-form" onSubmit={this.handleSubmit}>
+              <input type="text"
+                   ref="message"
+                   placeholder="Enter your message"
+                   value={this.state.message}
+                   onChange={ (event) => this.setState({message: event.target.value}) }
+              />
+              <button className="btn" onClick={ this.handleSubmit }>Send</button>
+            </form>
+          }
         </div>
       </div>
     );

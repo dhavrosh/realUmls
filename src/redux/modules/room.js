@@ -19,10 +19,10 @@ export default function reducer(state = initialState, action = {}) {
       };
     }
     case LOAD_FAIL:
-      return typeof action.error === 'string' ? {
+      return {
         ...state,
         loadError: action.error
-      } : state;
+      };
     default:
       return state;
   }

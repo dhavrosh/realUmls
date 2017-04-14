@@ -41,16 +41,9 @@ export default class RoomModal extends Component {
     });
   }
 
-  selectRole(memberPosition, role) {
+  selectRole(memberPosition, roleTitle) {
     const member = this.state.members[memberPosition];
-    member.role = role;
-    this.setState({
-      ...this.state,
-      members: [...this.state.members]
-    });
-  }
-
-  reloadMembers() {
+    member.role = this.props.roles.find(role => role.title === roleTitle)._id;
     this.setState({
       ...this.state,
       members: [...this.state.members]
@@ -109,11 +102,29 @@ export default class RoomModal extends Component {
       borderRadius: 5,
       border: '1px solid #ccc'
     };
+    const memberRow = {
+      marginTop: 15,
+      minHeight: 35
+    };
+    const memberRemoveCol = {
+      lineHeight: '30px'
+    };
+    const memberRemoveBtn = {
+      verticalAlign: 'center',
+      height: '34px',
+      width: '100%',
+      color: 'red',
+      backgroundColor: 'white',
+      borderColor: '#cccccc'
+    };
+    const memberCreateBtn = {
+      fontSize: '14px'
+    };
 
     return (
       <Modal show={ showModal } onHide={ close }>
         <Modal.Header closeButton style={ notEmphatic }>
-          <Modal.Title>Make your chat and have some fun</Modal.Title>
+          <Modal.Title>Make your room and have some fun</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="row">
@@ -141,22 +152,52 @@ export default class RoomModal extends Component {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="members" style={ lined }>Members:</label>
-                <button onClick={ this.addMember.bind(this) }>Add</button>
+                <div className="row">
+                  <div className="col-md-12">
+                    <label htmlFor="members" style={ lined }>Members:</label>
+                    <button className="btn btn-link btn-xs" style={memberCreateBtn} onClick={ this.addMember.bind(this) }>
+                      Create
+                    </button>
+                  </div>
+                </div>
                 { members.map((member, index) => {
                   const key = `member-${index}`;
+                  const memberRole = roles.find(role => role._id === member.role).title;
+
                   return (
-                    <div key={key}>
-                      <input type="text" ref={`${key}-email`} placeholder="Enter member email" defaultValue={member.email}/>
-                      { member.role }
-                      <select
-                        ref={`${key}-role`}
-                        placeholder="Choose role"
-                        value={member.role}
-                        onChange={event => this.selectRole(index, event.target.value)}>
-                        { roles.map(role => <option key={`role-${role.title}`}>{ role.title }</option>) }
-                      </select>
-                      <button onClick={() => this.removeMember(index)}>Remove</button>
+                    <div className="row" style={memberRow} key={key}>
+                      <div className="col-md-5 col-sm-5">
+                        <input
+                          type="text"
+                          ref={`${key}-email`}
+                          placeholder="Enter member email"
+                          defaultValue={member.email}
+                          style={ bordered }
+                          className="form-control"
+                        />
+                      </div>
+                      <div className="col-md-5 col-sm-5">
+                        <select
+                          style={ bordered }
+                          className="form-control"
+                          ref={`${key}-role`}
+                          placeholder="Choose role"
+                          value={memberRole}
+                          onChange={event => this.selectRole(index, event.target.value)}>
+                          { roles.map(role =>
+                            <option value={role.title} key={`role-${role.title}`}>
+                              {role.title}
+                            </option>)
+                          }
+                        </select>
+                      </div>
+                      <div className="col-md-2 col-sm-2" style={memberRemoveCol}>
+                        <button className="btn btn-xs"
+                                style={memberRemoveBtn}
+                                onClick={() => this.removeMember(index)}>
+                          <i className="fa fa-remove"/>
+                        </button>
+                      </div>
                     </div>
                   );
                 })

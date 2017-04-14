@@ -9,9 +9,7 @@ const REMOVE_SUCCESS = 'rooms/REMOVE_SUCCESS';
 const REMOVE_FAIL = 'rooms/REMOVE_FAIL';
 
 const initialState = {
-  loaded: false,
-  editing: {},
-  saveError: {}
+  loaded: false
 };
 
 export default function reducer(state = initialState, action = {}) {
