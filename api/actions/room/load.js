@@ -1,5 +1,6 @@
 import constants from '../../constants';
 import Room from '../../models/Room';
+import Role from '../../models/Role';
 import Resource from '../../models/Resource';
 import Permission from '../../models/Permission';
 
@@ -14,10 +15,13 @@ export default function load(req, [id]) {
           let permission = undefined;
 
           if (user) {
-            const creator = user._id === room.creator;
+            const creator = user._id == room.creator;
 
             if (creator) {
-              // find creator permission
+              const options = {title: constants.roles.creator};
+              const creator = await Role.findOne(options).select('-title').lean();
+
+              permission = await getMemberPermission(creator._id);
             } else {
               const member = room.members.find(getEmailComparator(user.email));
 
