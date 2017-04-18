@@ -1,17 +1,19 @@
 <mxEditor defaultGroup="group" defaultEdge="connector">
 	<include name="config/editor-commons.xml"/>
-	<add as="onInit"><![CDATA[
-		function ()
-		{
-			onInit(this);
-		}
-	]]></add>
 	<ui>
 		<add as="graph" element="graph"/>
 		<add as="status" element="status"/>
 		<add as="toolbar" element="toolbar"/>
 	</ui>
 	<Array as="templates">
+    <add as="symbol">
+      <Symbol label="Symbol" customAttribute="whatever">
+        <mxCell vertex="1" connectable="1" style="symbol;fontColor=red;">
+          <mxGeometry as="geometry" width="62" height="32"/>
+        </mxCell>
+        <CustomChild customAttribute="whatever"/>
+      </Symbol>
+    </add>
 		<add as="group">
 			<Group label="" href="">
 				<mxCell vertex="1" style="group" connectable="0"/>
@@ -33,56 +35,56 @@
 		</add>
 		<add as="rectangle">
 			<Rect label="Rectangle" href="">
-				<mxCell vertex="1">	
+				<mxCell vertex="1">
 					<mxGeometry as="geometry" width="80" height="40"/>
 				</mxCell>
 			</Rect>
 		</add>
 		<add as="text">
 			<Text label="Text Here" href="">
-				<mxCell vertex="1" style="text">	
+				<mxCell vertex="1" style="text">
 					<mxGeometry as="geometry" width="80" height="20"/>
 				</mxCell>
 			</Text>
 		</add>
 		<add as="image">
 			<Image label="" href="">
-				<mxCell vertex="1" style="image">	
+				<mxCell vertex="1" style="image">
 					<mxGeometry as="geometry" width="80" height="50"/>
 				</mxCell>
 			</Image>
 		</add>
 		<add as="rounded">
 			<Roundrect label="Rounded" href="">
-				<mxCell vertex="1" style="rounded">		
+				<mxCell vertex="1" style="rounded">
 					<mxGeometry as="geometry" width="80" height="40"/>
 				</mxCell>
 			</Roundrect>
 		</add>
 		<add as="shape">
 			<Shape label="Shape" href="">
-				<mxCell vertex="1" style="ellipse">		
+				<mxCell vertex="1" style="ellipse">
 					<mxGeometry as="geometry" width="60" height="60"/>
 				</mxCell>
 			</Shape>
 		</add>
 		<add as="actor">
 			<Shape label="Shape" href="">
-				<mxCell vertex="1" style="actor">		
+				<mxCell vertex="1" style="actor">
 					<mxGeometry as="geometry" width="40" height="60"/>
 				</mxCell>
 			</Shape>
 		</add>
 		<add as="cloud">
 			<Shape label="Shape" href="">
-				<mxCell vertex="1" style="cloud">		
+				<mxCell vertex="1" style="cloud">
 					<mxGeometry as="geometry" width="80" height="60"/>
 				</mxCell>
 			</Shape>
 		</add>
 		<add as="hline">
 			<Shape label="" href="">
-				<mxCell vertex="1" style="ellipse">		
+				<mxCell vertex="1" style="ellipse">
 					<mxGeometry as="geometry" width="60" height="10"/>
 				</mxCell>
 			</Shape>
@@ -106,7 +108,7 @@
 			{
 				var label = cell.getAttribute('label');
 				var style = cell.getStyle();
-			
+
 				return ((label != null) ? ('<b>' + label +
 						'</b> (' + cell.getId() + ')<br>') : '') +
 						((style != null) ? ('<br>Style: ' + style + '<br>') : '') +
@@ -121,6 +123,14 @@
 			}
 		]]></add>
 		<mxStylesheet as="stylesheet">
+      <add as="symbol">
+        <add as="fontSize" value="10"/>
+        <add as="fontColor" value="red"/>
+        <add as="align" value="center"/>
+        <add as="verticalAlign" value="middle"/>
+        <add as="strokeColor" value="red"/>
+        <add as="dashed" value="1"/>
+      </add>
 			<add as="text">
 				<add as="shape" value="rectangle"/>
 				<add as="perimeter" value="rectanglePerimeter"/>
@@ -253,7 +263,7 @@
 				function(cell, value)
 				{
 					var previous = null;
-					
+
 					if (value == null || isNaN(value.nodeType))
 					{
 						previous = cell.value.getAttribute('label');
@@ -272,7 +282,7 @@
 						previous = cell.value;
 						cell.value = value;
 					}
-					
+
 					return previous;
 				}
 			]]></add>
@@ -315,6 +325,9 @@
 			}
 		]]></add>
 		<br/><br/>
+    <add as="symbolTool" template="symbol"
+         style="symbol;images/rounded.gif"
+         icon="images/rounded.gif"/>
 		<add as="Text" template="text" icon="images/text.gif"/>
 		<add as="Container" template="container" icon="images/swimlane.gif"/>
 		<add as="Rectangle" template="rectangle" icon="images/rectangle.gif"/>

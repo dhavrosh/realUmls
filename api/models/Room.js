@@ -17,6 +17,7 @@ const RoomSchema = new mongoose.Schema({
   members: [MemberSchema],
   messages: [MessageSchema],
   description: String,
+  diagram: String
 });
 
 export default mongoose.model('Room', RoomSchema);

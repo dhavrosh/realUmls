@@ -1,10 +1,11 @@
-import initChatRoomSocket from './room/initSocket';
+import initRoomSocket from './room/initSocket';
 
 export default function initializeSockets(io) {
   io.on('connection', socket => {
-    const chatRoom = initChatRoomSocket(io, socket);
+    const room = initRoomSocket(io, socket);
 
-    socket.on('JOIN_ROOM', chatRoom.join);
-    socket.on('MESSAGE', chatRoom.message);
+    socket.on('JOIN_ROOM', room.join);
+    socket.on('MESSAGE', room.message);
+    socket.on('DIAGRAM', room.diagram);
   });
 }

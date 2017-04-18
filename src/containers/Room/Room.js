@@ -4,30 +4,8 @@ import Helmet from 'react-helmet';
 import { load } from 'redux/modules/room';
 import { asyncConnect } from 'redux-async-connect';
 import RoleAwareComponent from 'helpers/RoleAwareComponent';
-import mxgraph from 'mxgraph';
-
-let MxGraph;
-
-if (!__SERVER__) {
-  MxGraph = mxgraph({
-    mxImageBasePath: '../src/images',
-    mxBasePath: '../src'
-  });
-
-  window.onInit = onInit;
-}
 
 function createEditor(config) {
-  console.log(MxGraph);
-
-  const mxEvent = MxGraph.mxEvent;
-  const mxEffects = MxGraph.mxEffects;
-  const mxClient = MxGraph.mxClient;
-  const mxUtils = MxGraph.mxUtils;
-  const mxObjectCodec = MxGraph.mxObjectCodec;
-  const mxEditor = MxGraph.mxEditor;
-  const mxPanningManager = MxGraph.mxPanningManager;
-
   let editor = null;
 
   const hideSplash = function hideSplash() {
@@ -96,30 +74,7 @@ function createEditor(config) {
 
   return editor;
 }
-
-function onInit(editor)
-{
-  const mxEvent = MxGraph.mxEvent;
-  const mxEffects = MxGraph.mxEffects;
-  const mxClient = MxGraph.mxClient;
-  const mxUtils = MxGraph.mxUtils;
-  const mxObjectCodec = MxGraph.mxObjectCodec;
-  const mxEditor = MxGraph.mxEditor;
-  const mxPanningManager = MxGraph.mxPanningManager;
-  const mxVertexHandler = MxGraph.mxVertexHandler;
-  const mxGraphHandler = MxGraph.mxGraphHandler;
-  const mxGuide = MxGraph.mxGuide;
-  const mxEdgeHandler = MxGraph.mxEdgeHandler;
-  const mxConnectionHandler = MxGraph.mxConnectionHandler;
-  const mxImage = MxGraph.mxImage;
-  const mxCodec = MxGraph.mxCodec;
-  const mxXmlCanvas2D = MxGraph.mxXmlCanvas2D;
-  const mxSvgCanvas2D = MxGraph.mxSvgCanvas2D;
-  const mxXmlRequest = MxGraph.mxXmlRequest;
-  const mxImageExport = MxGraph.mxImageExport;
-  const mxResources = MxGraph.mxResources;
-
-
+function onInit(editor) {
   // Enables rotation handle
   mxVertexHandler.prototype.rotationEnabled = true;
 
@@ -148,11 +103,11 @@ function onInit(editor)
   editor.graph.connectionHandler.setCreateTarget(true);
 
   // Updates the title if the root changes
-  var title = document.getElementById('title');
+  const title = document.getElementById('title');
 
   if (title != null)
   {
-    var f = function(sender)
+    const f = function(sender)
     {
       title.innerHTML = 'mxDraw - ' + sender.getTitle();
     };
@@ -181,20 +136,20 @@ function onInit(editor)
 
   // Defines a new action to switch between
   // XML and graphical display
-  var textNode = document.getElementById('xml');
-  var graphNode = editor.graph.container;
-  var sourceInput = document.getElementById('source');
+  const textNode = document.getElementById('xml');
+  const graphNode = editor.graph.container;
+  const sourceInput = document.getElementById('source');
   sourceInput.checked = false;
 
-  var funct = function(editor)
+  const funct = function(editor)
   {
     if (sourceInput.checked)
     {
       graphNode.style.display = 'none';
       textNode.style.display = 'inline';
 
-      var enc = new mxCodec();
-      var node = enc.encode(editor.graph.getModel());
+      const enc = new mxCodec();
+      const node = enc.encode(editor.graph.getModel());
 
       textNode.value = mxUtils.getPrettyXml(node);
       textNode.originalValue = textNode.value;
@@ -206,8 +161,8 @@ function onInit(editor)
 
       if (textNode.value != textNode.originalValue)
       {
-        var doc = mxUtils.parseXml(textNode.value);
-        var dec = new mxCodec(doc);
+        const doc = mxUtils.parseXml(textNode.value);
+        const dec = new mxCodec(doc);
         dec.decode(doc.documentElement, editor.graph.getModel());
       }
 
@@ -236,44 +191,44 @@ function onInit(editor)
   });
 
   // Create select actions in page
-  var node = document.getElementById('mainActions');
-  var buttons = ['group', 'ungroup', 'cut', 'copy', 'paste', 'delete', 'undo', 'redo', 'print', 'show'];
+  let node = document.getElementById('mainActions');
+  const buttons = ['group', 'ungroup', 'cut', 'copy', 'paste', 'delete', 'undo', 'redo', 'print', 'show'];
 
   // Only adds image and SVG export if backend is available
   // NOTE: The old image export in mxEditor is not used, the urlImage is used for the new export.
   if (editor.urlImage != null)
   {
     // Client-side code for image export
-    var exportImage = function(editor)
+    const exportImage = function(editor)
     {
-      var graph = editor.graph;
-      var scale = graph.view.scale;
-      var bounds = graph.getGraphBounds();
+      const graph = editor.graph;
+      const scale = graph.view.scale;
+      const bounds = graph.getGraphBounds();
 
       // New image export
-      var xmlDoc = mxUtils.createXmlDocument();
-      var root = xmlDoc.createElement('output');
+      const xmlDoc = mxUtils.createXmlDocument();
+      const root = xmlDoc.createElement('output');
       xmlDoc.appendChild(root);
 
       // Renders graph. Offset will be multiplied with state's scale when painting state.
-      var xmlCanvas = new mxXmlCanvas2D(root);
+      const xmlCanvas = new mxXmlCanvas2D(root);
       xmlCanvas.translate(Math.floor(1 / scale - bounds.x), Math.floor(1 / scale - bounds.y));
       xmlCanvas.scale(scale);
 
-      var imgExport = new mxImageExport();
+      const imgExport = new mxImageExport();
       imgExport.drawState(graph.getView().getState(graph.model.root), xmlCanvas);
 
       // Puts request data together
-      var w = Math.ceil(bounds.width * scale + 2);
-      var h = Math.ceil(bounds.height * scale + 2);
-      var xml = mxUtils.getXml(root);
+      const w = Math.ceil(bounds.width * scale + 2);
+      const h = Math.ceil(bounds.height * scale + 2);
+      const xml = mxUtils.getXml(root);
 
       // Requests image if request is valid
       if (w > 0 && h > 0)
       {
-        var name = 'export.png';
-        var format = 'png';
-        var bg = '&bg=#FFFFFF';
+        const name = 'export.png';
+        const format = 'png';
+        const bg = '&bg=#FFFFFF';
 
         new mxXmlRequest(editor.urlImage, 'filename=' + name + '&format=' + format +
           bg + '&w=' + w + '&h=' + h + '&xml=' + encodeURIComponent(xml)).
@@ -284,15 +239,15 @@ function onInit(editor)
     editor.addAction('exportImage', exportImage);
 
     // Client-side code for SVG export
-    var exportSvg = function(editor)
+    const exportSvg = function(editor)
     {
-      var graph = editor.graph;
-      var scale = graph.view.scale;
-      var bounds = graph.getGraphBounds();
+      const graph = editor.graph;
+      const scale = graph.view.scale;
+      const bounds = graph.getGraphBounds();
 
       // Prepares SVG document that holds the output
-      var svgDoc = mxUtils.createXmlDocument();
-      var root = (svgDoc.createElementNS != null) ?
+      const svgDoc = mxUtils.createXmlDocument();
+      const root = (svgDoc.createElementNS != null) ?
         svgDoc.createElementNS(mxConstants.NS_SVG, 'svg') : svgDoc.createElement('svg');
 
       if (root.style != null)
@@ -315,22 +270,22 @@ function onInit(editor)
       root.setAttribute('version', '1.1');
 
       // Adds group for anti-aliasing via transform
-      var group = (svgDoc.createElementNS != null) ?
+      const group = (svgDoc.createElementNS != null) ?
         svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
       group.setAttribute('transform', 'translate(0.5,0.5)');
       root.appendChild(group);
       svgDoc.appendChild(root);
 
       // Renders graph. Offset will be multiplied with state's scale when painting state.
-      var svgCanvas = new mxSvgCanvas2D(group);
+      const svgCanvas = new mxSvgCanvas2D(group);
       svgCanvas.translate(Math.floor(1 / scale - bounds.x), Math.floor(1 / scale - bounds.y));
       svgCanvas.scale(scale);
 
-      var imgExport = new mxImageExport();
+      const imgExport = new mxImageExport();
       imgExport.drawState(graph.getView().getState(graph.model.root), svgCanvas);
 
-      var name = 'export.svg';
-      var xml = encodeURIComponent(mxUtils.getXml(root));
+      const name = 'export.svg';
+      const xml = encodeURIComponent(mxUtils.getXml(root));
 
       new mxXmlRequest(editor.urlEcho, 'filename=' + name + '&format=svg' + '&xml=' + xml).simulate(document, "_blank");
     };
@@ -339,14 +294,14 @@ function onInit(editor)
 
     buttons.push('exportImage');
     buttons.push('exportSvg');
-  };
+  }
 
-  for (var i = 0; i < buttons.length; i++)
+  for (let i = 0; i < buttons.length; i++)
   {
-    var button = document.createElement('button');
+    const button = document.createElement('button');
     mxUtils.write(button, mxResources.get(buttons[i]));
 
-    var factory = function(name)
+    const factory = function(name)
     {
       return function()
       {
@@ -359,7 +314,7 @@ function onInit(editor)
   }
 
   // Create select actions in page
-  var node = document.getElementById('selectActions');
+  node = document.getElementById('selectActions');
   mxUtils.write(node, 'Select: ');
   mxUtils.linkAction(node, 'All', editor, 'selectAll');
   mxUtils.write(node, ', ');
@@ -370,7 +325,7 @@ function onInit(editor)
   mxUtils.linkAction(node, 'Edges', editor, 'selectEdges');
 
   // Create select actions in page
-  var node = document.getElementById('zoomActions');
+  node = document.getElementById('zoomActions');
   mxUtils.write(node, 'Zoom: ');
   mxUtils.linkAction(node, 'In', editor, 'zoomIn');
   mxUtils.write(node, ', ');
@@ -413,20 +368,67 @@ export default class Room extends RoleAwareComponent {
 
   state = {
     message: '',
-    messages: []
+    room: this.props.room,
+    error: this.props.error
   };
+
 
   componentDidMount() {
     if (socket) {
-      socket.emit('JOIN_ROOM', this.props.params.id);
+      const room = this.state.room;
 
+      socket.emit('JOIN_ROOM', room._id);
       socket.on('MESSAGE', this.onMessageReceived);
       socket.on('INIT', this.onInit);
-    }
 
-    if (!__SERVER__) {
-      const editor = createEditor('../config/diagrameditor.xml');
-      onInit(editor);
+      if (!__SERVER__) {
+        const editor = createEditor('../config/diagrameditor.xml');
+
+        onInit(editor);
+
+        const graph = editor.graph;
+        const model = graph.getModel();
+
+        model.local = true;
+
+        if (room && room.diagram) {
+          setModel(room.diagram);
+        }
+
+        model.addListener(mxEvent.CHANGE, function(sender, evt) {
+          if (model.local) {
+            const changes = evt.getProperty('edit').changes;
+
+            mxEffects.animateChanges(graph, changes);
+
+            const enc = new mxCodec();
+            const node = enc.encode(model);
+
+            socket.emit('DIAGRAM', room._id, mxUtils.getXml(node));
+          }
+
+          model.local = true;
+        });
+
+        socket.on('DIAGRAM', function(node){
+          model.beginUpdate();
+
+          try {
+            setModel(node);
+            model.local = false;
+          }
+          finally {
+            model.endUpdate();
+          }
+        });
+
+        function setModel(node) {
+          const doc = mxUtils.parseXml(node);
+          const codec = new mxCodec(doc);
+
+          codec.decode(doc.documentElement, model);
+        }
+      }
     }
   }
 
@@ -437,16 +439,16 @@ export default class Room extends RoleAwareComponent {
     }
   }
 
-  onInit = messages => {
-    if (this.refs.messages) {
-      this.setState({ messages });
-    }
+  onInit = () => {
+    // if (this.refs.messages)
+    console.log('INIT')
   };
 
   onMessageReceived = (data) => {
-    const messages = this.state.messages;
-    messages.push(data);
-    this.setState({ messages });
+    const room = this.state.room;
+    room.messages.push(data);
+
+    this.setState({ ...this.state, room });
   };
 
   handleSubmit = (event) => {
@@ -465,18 +467,18 @@ export default class Room extends RoleAwareComponent {
   };
 
   render() {
-    const { room, error } = this.props;
+    const { room, error } = this.state;
     const style = require('./Room.scss');
     const margin = { marginTop: 30 };
 
     return error ? (<div>ERROR: {error.message}</div>) : (
       <div className={style.room}>
+
         <Helmet title="Room"/>
         <h1 className={style}>{ `Room ${room.title}` }</h1>
-
         <div>
           <ul style={ margin } ref="messages">
-          {this.state.messages.map((msg) => {
+          { room.messages && room.messages.map((msg) => {
             return msg ? <li key={`room.msg.${msg._id}`}>{msg.author}: {msg.text}</li> : '';
           })}
           </ul>
@@ -508,12 +510,12 @@ export default class Room extends RoleAwareComponent {
                 <td id="toolbar" style={{width: '16px', paddingLeft: '20px'}}>
                 </td>
                 <td style={{borderWidth: '1px', borderStyle: 'solid', borderColor: 'black'}}>
-                  <div id="graph" style={{position: 'relative', height: '480px', width: '684px', overflow: 'hidden', cursor: 'default'}}>
+                  <div id="graph" style={{position: 'relative', height: '480px', width: '684px', overflow: 'hidden', cursor: 'default', backgroundImage: `url(${'images/grid.gif'})`}}>
                     <center id="splash" style={{paddingTop: '230px'}}>
                       <img src="images/loading.gif"/>
                     </center>
                   </div>
-                  <textarea id="xml" style={{height: '480px', width: '684px', display: 'none', borderStyle: 'none'}}></textarea>
+                  <textarea id="xml" style={{height: '480px', width: '684px', display: 'none', borderStyle: 'none'}}/>
                 </td>
               </tr>
               </tbody>
