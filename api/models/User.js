@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 const Schema = mongoose.Schema;
 const SALT_WORK_FACTOR = 10;
 
+// TODO: save user image
 const UserSchema = new Schema({
   email: { type: String, required: true, index: { unique: true } },
   username: { type: String, required: true },

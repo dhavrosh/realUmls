@@ -1,3 +1,4 @@
+import User from '../../models/User';
 import Room from '../../models/Room';
 import mongoose from 'mongoose';
 
@@ -5,24 +6,23 @@ export default function initSocket(io, socket) {
   const options =  { safe: true, upsert: true };
 
   async function join(id) {
-    // let res = await Room.findById(id).select('-_id messages').lean();
     socket.join(id);
     socket.emit('INIT');
   }
 
-  // TODO: remove await
   async function message(id, data) {
-    data._id = mongoose.Types.ObjectId();
+    const author = await User.findById(data.authorId).select('-_id username').lean();
+    const messageId = mongoose.Types.ObjectId().toString();
+    const msg = {...data, authorName: author.username, _id: messageId };
 
-    await Room.findByIdAndUpdate(id, { $push: { 'messages': data }}, options);
+    io.in(id).emit('MESSAGE', msg);
 
-    io.in(id).emit('MESSAGE', data);
+    await Room.findByIdAndUpdate(id, { $push: { 'messages': msg }}, options);
   }
 
   async function diagram(id, diagram) {
-    await Room.findByIdAndUpdate(id, { diagram }, options);
-
     socket.broadcast.to(id).emit('DIAGRAM', diagram);
+    await Room.findByIdAndUpdate(id, { diagram }, options);
   }
 
   return {

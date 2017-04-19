@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 
 const MessageSchema = {
   text: { type: String, required: true },
-  author: String,
+  authorId: String,
+  authorName: String,
   createdAt: { type: Date, default: Date.now() }
 };
 

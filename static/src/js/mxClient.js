@@ -523,7 +523,7 @@ else
 // Adds all required stylesheets and namespaces
 if (mxLoadStylesheets)
 {
-	mxClient.link('stylesheet', mxClient.basePath + '/css/common.css');
+	mxClient.link('stylesheet', mxClient.basePath + '/src/css/common.css');
 }
 
 /**

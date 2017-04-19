@@ -133,6 +133,7 @@
     "lodash": "^4.17.4",
     "lru-memoize": "^1.0.0",
     "map-props": "^1.0.0",
+    "moment": "^2.18.1",
     "mongoose": "^4.8.5",
     "multireducer": "^2.0.0",
     "mxgraph": "^3.7.2-2",

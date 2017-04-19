@@ -5,6 +5,7 @@
  *
  */
 
+export Chat from './Room/Chat/Chat';
 export RoomPanel from './Room/Panel';
 export RoomModal from './Room/Modal';
 export AlertModal from './Alert/Modal';

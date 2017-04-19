@@ -4,6 +4,7 @@ import Helmet from 'react-helmet';
 import { load } from 'redux/modules/room';
 import { asyncConnect } from 'redux-async-connect';
 import RoleAwareComponent from 'helpers/RoleAwareComponent';
+import {Chat} from 'components';
 
 function createEditor(config) {
   let editor = null;
@@ -58,7 +59,7 @@ function createEditor(config) {
       funct(editor);
 
       // Displays version in statusbar
-      editor.setStatus('mxGraph ' + mxClient.VERSION);
+      editor.setStatus('Status');
 
       // Shows the application
       hideSplash();
@@ -109,86 +110,12 @@ function onInit(editor) {
   {
     const f = function(sender)
     {
-      title.innerHTML = 'mxDraw - ' + sender.getTitle();
+      title.innerHTML = 'Diagram - ' + sender.getTitle();
     };
 
     editor.addListener(mxEvent.ROOT, f);
     f(editor);
   }
-
-  // Changes the zoom on mouseWheel events
-  mxEvent.addMouseWheelListener(function (evt, up)
-  {
-    if (!mxEvent.isConsumed(evt))
-    {
-      if (up)
-      {
-        editor.execute('zoomIn');
-      }
-      else
-      {
-        editor.execute('zoomOut');
-      }
-
-      mxEvent.consume(evt);
-    }
-  });
-
-  // Defines a new action to switch between
-  // XML and graphical display
-  const textNode = document.getElementById('xml');
-  const graphNode = editor.graph.container;
-  const sourceInput = document.getElementById('source');
-  sourceInput.checked = false;
-
-  const funct = function(editor)
-  {
-    if (sourceInput.checked)
-    {
-      graphNode.style.display = 'none';
-      textNode.style.display = 'inline';
-
-      const enc = new mxCodec();
-      const node = enc.encode(editor.graph.getModel());
-
-      textNode.value = mxUtils.getPrettyXml(node);
-      textNode.originalValue = textNode.value;
-      textNode.focus();
-    }
-    else
-    {
-      graphNode.style.display = '';
-
-      if (textNode.value != textNode.originalValue)
-      {
-        const doc = mxUtils.parseXml(textNode.value);
-        const dec = new mxCodec(doc);
-        dec.decode(doc.documentElement, editor.graph.getModel());
-      }
-
-      textNode.originalValue = null;
-
-      // Makes sure nothing is selected in IE
-      if (mxClient.IS_IE)
-      {
-        mxUtils.clearSelection();
-      }
-
-      textNode.style.display = 'none';
-
-      // Moves the focus back to the graph
-      editor.graph.container.focus();
-    }
-  };
-
-  editor.addAction('switchView', funct);
-
-  // Defines a new action to switch between
-  // XML and graphical display
-  mxEvent.addListener(sourceInput, 'click', function()
-  {
-    editor.execute('switchView');
-  });
 
   // Create select actions in page
   let node = document.getElementById('mainActions');
@@ -196,11 +123,9 @@ function onInit(editor) {
 
   // Only adds image and SVG export if backend is available
   // NOTE: The old image export in mxEditor is not used, the urlImage is used for the new export.
-  if (editor.urlImage != null)
-  {
+  if (editor.urlImage != null) {
     // Client-side code for image export
-    const exportImage = function(editor)
-    {
+    const exportImage = function(editor) {
       const graph = editor.graph;
       const scale = graph.view.scale;
       const bounds = graph.getGraphBounds();
@@ -239,8 +164,7 @@ function onInit(editor) {
     editor.addAction('exportImage', exportImage);
 
     // Client-side code for SVG export
-    const exportSvg = function(editor)
-    {
+    const exportSvg = function(editor) {
       const graph = editor.graph;
       const scale = graph.view.scale;
       const bounds = graph.getGraphBounds();
@@ -440,27 +364,27 @@ export default class Room extends RoleAwareComponent {
   }
 
   onInit = () => {
-    // if (this.refs.messages)
     console.log('INIT')
   };
 
   onMessageReceived = (data) => {
     const room = this.state.room;
+
+    if (!Array.isArray(room.messages)) {
+      room.messages = [];
+    }
+
     room.messages.push(data);
 
     this.setState({ ...this.state, room });
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
+ sendMessage = msg => {
+    const {params, user} = this.props;
 
-    const msg = this.state.message;
-    const roomId = this.props.params.id;
-
-    if (msg) {
-      this.setState({ message: '' });
-      socket.emit('MESSAGE', roomId, {
-        author: this.props.user && this.props.user.username || 'Anonymous',
+    if (socket) {
+      socket.emit('MESSAGE', params.id, {
+        authorId: user && user._id || '#1234',
         text: msg
       });
     }
@@ -468,72 +392,60 @@ export default class Room extends RoleAwareComponent {
 
   render() {
     const { room, error } = this.state;
+    const { user } = this.props;
     const style = require('./Room.scss');
-    const margin = { marginTop: 30 };
 
-    return error ? (<div>ERROR: {error.message}</div>) : (
-      <div className={style.room}>
-
-        <Helmet title="Room"/>
-        <h1 className={style}>{ `Room ${room.title}` }</h1>
-        <div>
-          <ul style={ margin } ref="messages">
-          { room.messages && room.messages.map((msg) => {
-            return msg ? <li key={`room.msg.${msg._id}`}>{msg.author}: {msg.text}</li> : '';
-          })}
-          </ul>
-          { this.hasPermission('write') &&
-            <form className="login-form" onSubmit={this.handleSubmit}>
-              <input type="text"
-                   ref="message"
-                   placeholder="Enter your message"
-                   value={this.state.message}
-                   onChange={ (event) => this.setState({message: event.target.value}) }
-              />
-              <button className="btn" onClick={ this.handleSubmit }>Send</button>
-            </form>
-          }
-          <div id="page">
-            <div id="header">
-              <div id="headerimg" style={{overflow: 'hidden'}}>
-                <h1 id="title">mxDraw</h1>
+    return (error
+        ? <div>ERROR: {error.message}</div>
+        : <div className={style.room}>
+            <Helmet title="Room"/>
+            {/*<h1 classNameName={style}>{ `Room ${room.title}` }</h1>*/}
+            <div className="row">
+              <div className="col-md-8">
+                <div id="header">
+                  <div id="headerimg" style={{overflow: 'hidden'}}>
+                    <h1 id="title">mxDraw</h1>
+                  </div>
+                </div>
+                <div id="mainActions"
+                     style={{width: '100%', paddingTop: '8px', paddingLeft: '24px', paddingBottom: '8px'}}>
+                </div>
+                <div id="selectActions" style={{width: '100%', paddingLeft: '54px', paddingBottom: '4px'}}>
+                </div>
+                <table style={{width: "730px"}}>
+                  <tbody>
+                  <tr>
+                    <td id="toolbar" style={{width: '16px', paddingLeft: '20px'}}>
+                    </td>
+                    <td style={{borderWidth: '1px', borderStyle: 'solid', borderColor: 'black'}}>
+                      <div id="graph" style={{position: 'relative', height: '480px', width: '684px', overflow: 'hidden', cursor: 'default', backgroundImage: `url(${'images/grid.gif'})`}}>
+                        <center id="splash" style={{paddingTop: '230px'}}>
+                          <img src="images/loading.gif"/>
+                        </center>
+                      </div>
+                      <textarea id="xml" style={{height: '480px', width: '684px', display: 'none', borderStyle: 'none'}}/>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+                <div id="zoomActions" style={{width: '100%', paddingLeft: '54px', paddingTop: '4px'}}>
+                </div>
+                <div id="footer">
+                  <p id="status">
+                    Loading...
+                  </p>
+                  <br/>
+                </div>
+              </div>
+              <div className="col-md-4">
+                <Chat
+                  messages={room.messages}
+                  userId={user && user._id}
+                  sendMessage={this.sendMessage}
+                />
               </div>
             </div>
-            <div id="mainActions"
-                 style={{width: '100%', paddingTop: '8px', paddingLeft: '24px', paddingBottom: '8px'}}>
-            </div>
-            <div id="selectActions" style={{width: '100%', paddingLeft: '54px', paddingBottom: '4px'}}>
-            </div>
-            <table style={{width: "730px"}}>
-              <tbody>
-              <tr>
-                <td id="toolbar" style={{width: '16px', paddingLeft: '20px'}}>
-                </td>
-                <td style={{borderWidth: '1px', borderStyle: 'solid', borderColor: 'black'}}>
-                  <div id="graph" style={{position: 'relative', height: '480px', width: '684px', overflow: 'hidden', cursor: 'default', backgroundImage: `url(${'images/grid.gif'})`}}>
-                    <center id="splash" style={{paddingTop: '230px'}}>
-                      <img src="images/loading.gif"/>
-                    </center>
-                  </div>
-                  <textarea id="xml" style={{height: '480px', width: '684px', display: 'none', borderStyle: 'none'}}/>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-            <span style={{float: 'right', paddingRight: '36px'}}>
-			        <input id="source" type="checkbox"/>Source
-		        </span>
-            <div id="zoomActions" style={{width: '100%', paddingLeft: '54px', paddingTop: '4px'}}>
-            </div>
-            <div id="footer">
-              <p id="status">
-                Loading...
-              </p>
-              <br/>
-            </div>
-          </div>
         </div>
-      </div>
     );
   }
 }
