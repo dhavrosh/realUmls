@@ -6,7 +6,8 @@ export default class Room extends Component {
   static propTypes = {
     userId: PropTypes.string.isRequired,
     messages: PropTypes.array.isRequired,
-    sendMessage: PropTypes.func.isRequired
+    sendMessage: PropTypes.func.isRequired,
+    blockHeight: PropTypes.number.isRequired
   };
 
   state = {
@@ -25,15 +26,17 @@ export default class Room extends Component {
   };
 
   render() {
-    const { messages, userId } = this.props;
+    const { messages, userId, blockHeight } = this.props;
     const style = require('./Chat.scss');
 
     return (
-      <div className={`${style['chat-container']} panel panel-primary`}>
+      <div className={`${style['chat-container']} panel panel-default`}>
         <div className="panel-heading">
           Chat {/* Close btn */}
         </div>
-        <div className={`panel-body ${style['panel-body']}`}>
+        <div
+          style={{height: `${blockHeight}px`}}
+          className={`panel-body ${style['panel-body']}`}>
           <ul className={style.chat} ref="messages">
             { Array.isArray(messages) && messages.map((msg, index) =>
                 <MessageBar

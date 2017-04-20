@@ -1,0 +1,56 @@
+.diagram {
+  .actions {
+    padding: 10px 15px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    color: #333333;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-bottom: 0;
+  }
+
+  .mainActions button {
+    margin: 2px;
+    padding: 5px 10px;
+    background-color: #5bc0de;
+    border-radius: 3px;
+    border-width: 0;
+    color: #fff;
+  }
+
+  .additionalActions button {
+    padding: 5px 10px;
+    line-height: 1.5;
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-color: transparent;
+    color: #337ab7;
+    border-radius: 0;
+  }
+
+  .mainActions div {
+    text-align: center;
+  }
+
+  .toolbar {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-top: 0;
+    border-right: 0;
+    border-bottom-left-radius: 3px;
+  }
+
+  .col-without-padding {
+    padding: 0;
+  }
+
+  .graph {
+    position: relative;
+    height: 480px;
+    width: 100%;
+    overflow: scroll;
+    cursor: default;
+    border: 1px solid #ddd;
+  }
+}
