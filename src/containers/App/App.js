@@ -105,7 +105,7 @@ export default class App extends Component {
           </Navbar.Collapse>
         </Navbar>
 
-        <div className="container" style={{ marginTop: 70 }}>
+        <div className="container" style={{ marginTop: 70}}>
           {this.props.children}
         </div>
 

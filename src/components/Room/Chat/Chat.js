@@ -26,14 +26,13 @@ export default class Room extends Component {
   };
 
   render() {
-    const { messages, userId, blockHeight } = this.props;
+    const { messages, userId } = this.props;
     const style = require('./Chat.scss');
+
+    const blockHeight = this.props.blockHeight - 30;
 
     return (
       <div className={`${style['chat-container']} panel panel-default`}>
-        <div className="panel-heading">
-          Chat {/* Close btn */}
-        </div>
         <div
           style={{height: `${blockHeight}px`}}
           className={`panel-body ${style['panel-body']}`}>

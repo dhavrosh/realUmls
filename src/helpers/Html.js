@@ -46,9 +46,24 @@ export default class Html extends Component {
           {/* can smoothen the initial style flash (flicker) on page load in development mode. */}
           {/* ideally one could also include here the style for the current page (Home.scss, About.scss, etc) */}
           { Object.keys(assets.styles).length === 0 ? <style dangerouslySetInnerHTML={{__html: require('../theme/bootstrap.config.js') + require('../containers/App/App.scss')._style}}/> : null }
+          <link rel="stylesheet" type="text/css" href="styles/grapheditor.css"/>
         </head>
         <body>
-          <script type="text/javascript" src="src/js/mxClient.js"></script>
+          {/* TODO: use mxClient.include */}
+          <script type="text/javascript" src="js/Init.js"></script>
+          <script type="text/javascript" src="jscolor/jscolor.js"></script>
+          <script type="text/javascript" src="sanitizer/sanitizer.min.js"></script>
+          <script type="text/javascript" src="js/mxClient.js"></script>
+          <script type="text/javascript" src="js/EditorUi.js"></script>
+          <script type="text/javascript" src="js/Editor.js"></script>
+          <script type="text/javascript" src="js/Sidebar.js"></script>
+          <script type="text/javascript" src="js/Graph.js"></script>
+          <script type="text/javascript" src="js/Shapes.js"></script>
+          <script type="text/javascript" src="js/Actions.js"></script>
+          <script type="text/javascript" src="js/Menus.js"></script>
+          <script type="text/javascript" src="js/Format.js"></script>
+          <script type="text/javascript" src="js/Toolbar.js"></script>
+          <script type="text/javascript" src="js/Dialogs.js"></script>
           <div id="content" dangerouslySetInnerHTML={{__html: content}}/>
           <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())};`}} charSet="UTF-8"/>
           <script src={assets.javascript.main} charSet="UTF-8"/>

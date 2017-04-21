@@ -38,7 +38,7 @@ export default class Room extends RoleAwareComponent {
     this.DIAGRAM_MIN_WIDTH = 700;
     this.COL_SM_MAX = 991;
     this.MARGIN_CONST = 180;
-    this.DEFAULT_BLOCK_HEIGHT = 250;
+    this.DEFAULT_BLOCK_HEIGHT = 450;
   }
 
   state = {
@@ -129,9 +129,11 @@ export default class Room extends RoleAwareComponent {
   }
 
   render() {
-    const { room, error, blockHeight } = this.state;
+    const { room, error } = this.state;
     const { user } = this.props;
     const style = require('./Room.scss');
+
+    let blockHeight = this.DEFAULT_BLOCK_HEIGHT; // this.state.blockHeight
 
     return (error
         ? <div>ERROR: {error.message}</div>
@@ -141,13 +143,12 @@ export default class Room extends RoleAwareComponent {
             <div className={`${style.marginTop} row`}>
               <div className="col-md-9 col-sm-12">
               {
-                this.isDiagramAppropriate() && <Diagram room={room}/>
+                this.isDiagramAppropriate() && <Diagram room={room} blockHeight={blockHeight}/>
                 || 'Use device with bigger screen resolution, diagram is not available here'
               }
               </div>
               <div
-                className={`col-md-3 col-sm-12 ${this.isSmallScreen() && style.marginTop}`}
-              >
+                className={`col-md-3 col-sm-12 ${style.marginTop}`}>
                 <Chat messages={room.messages}
                   userId={user && user._id}
                   sendMessage={this.sendMessage}
