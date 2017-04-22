@@ -5,6 +5,11 @@ import { load } from 'redux/modules/room';
 import { asyncConnect } from 'redux-async-connect';
 import RoleAwareComponent from 'helpers/RoleAwareComponent';
 import {Chat, Diagram} from 'components';
+import {
+  getHeight as getWindowHeight,
+  getWidth as getWindowWidth,
+  getElementHeight
+} from 'helpers/Window';
 
 @asyncConnect([{
   promise: ({
@@ -35,7 +40,7 @@ export default class Room extends RoleAwareComponent {
   constructor(props) {
     super(props);
 
-    this.DIAGRAM_MIN_WIDTH = 700;
+    this.DIAGRAM_MIN_WIDTH = 800;
     this.COL_SM_MAX = 991;
     this.MARGIN_CONST = 180;
     this.DEFAULT_BLOCK_HEIGHT = 450;
@@ -94,34 +99,18 @@ export default class Room extends RoleAwareComponent {
     }
   };
 
-  getElementHeight(title) {
-    const el = document.querySelector(title);
-    const styles = window.getComputedStyle(el);
-    const margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
-
-    return Math.ceil(el.offsetHeight + margin);
-  }
-
   setContainerHeight() {
-    const navbarHeight = this.getElementHeight('.navbar');
-    const titleHeight = this.getElementHeight('.room-title');
-    const windowHeight = this.getWindowHeight();
+    const navbarHeight = getElementHeight('.navbar');
+    const titleHeight = getElementHeight('.room-title');
+    const windowHeight = getWindowHeight();
     const marginHeight = this.MARGIN_CONST;
     const blockHeight = windowHeight - (navbarHeight + titleHeight + marginHeight);
 
     this.setState({...this.state, blockHeight});
   }
 
-  getWindowWidth() {
-    return __CLIENT__ && window.innerWidth;
-  }
-
-  getWindowHeight() {
-    return __CLIENT__ && window.innerHeight;
-  }
-
   isDiagramAppropriate() {
-    return this.getWindowWidth() > this.DIAGRAM_MIN_WIDTH;
+    return getWindowWidth() > this.DIAGRAM_MIN_WIDTH;
   }
 
   isSmallScreen() {

@@ -1,5 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 import MessageBar from './MessageBar';
+import {getElementHeight} from 'helpers/Window';
 
 export default class Room extends Component {
 
@@ -11,8 +12,21 @@ export default class Room extends Component {
   };
 
   state = {
-    message: ''
+    message: '',
+    bodyHeight: 0
   };
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props !== nextProps) {
+      const bodyHeight = this.calculateBodyHeight(this.props.blockHeight);
+      this.setState({...this.state, bodyHeight});
+    }
+  }
+
+  calculateBodyHeight(total) {
+    const footerHeight = getElementHeight('#chat-footer');
+    return total - footerHeight;
+  }
 
   handleSubmit = event => {
     event.preventDefault();
@@ -29,12 +43,12 @@ export default class Room extends Component {
     const { messages, userId } = this.props;
     const style = require('./Chat.scss');
 
-    const blockHeight = this.props.blockHeight - 30;
+    const bodyHeight = this.state.bodyHeight;
 
     return (
       <div className={`${style['chat-container']} panel panel-default`}>
         <div
-          style={{height: `${blockHeight}px`}}
+          style={{height: `${bodyHeight}px`}}
           className={`panel-body ${style['panel-body']}`}>
           <ul className={style.chat} ref="messages">
             { Array.isArray(messages) && messages.map((msg, index) =>
@@ -46,7 +60,9 @@ export default class Room extends Component {
             )}
           </ul>
         </div>
-        <div className="panel-footer">
+        <div
+          id="chat-footer"
+          className="panel-footer">
           <form onSubmit={this.handleSubmit}>
             <div className="input-group">
               <input
