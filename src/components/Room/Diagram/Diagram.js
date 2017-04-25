@@ -77,9 +77,11 @@ export default class Room extends Component {
           themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
 
           const container = document.getElementById('container');
+          const editorUI = new EditorUi(new Editor(urlParams['chrome'] == '0', themes), container);
 
-          // Main
-          new EditorUi(new Editor(urlParams['chrome'] == '0', themes), container);
+          editorUI.actions.get('pageView').funct();
+          editorUI.setGridColor('#A9C4EB');
+          editorUI.editor.graph.setGridSize(15);
         });
       })();
     }
@@ -95,7 +97,7 @@ export default class Room extends Component {
     const {blockHeight} = this.props;
 
     return (
-      <div id="container" style={{height: `${blockHeight}px`, position: 'relative'}}></div>
+      <div id="container" style={{height: `${blockHeight}px`, position: 'relative' }}></div>
     );
   }
 }

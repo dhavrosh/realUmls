@@ -18,3 +18,12 @@
 .container {
   width: 90%;
 }
+
+#container * {
+  box-sizing: content-box !important;
+  -webkit-box-sizing: content-box !important;
+}
+
+.mxPopupMenu tr td hr {
+  margin: 5px 0 !important;
+}

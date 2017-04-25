@@ -70,8 +70,8 @@ EditorUi = function(editor, container, lightbox)
 		this.diagramContainer.onmousedown = textEditing;
 		this.sidebarContainer.onselectstart = textEditing;
 		this.sidebarContainer.onmousedown = textEditing;
-		this.formatContainer.onselectstart = textEditing;
-		this.formatContainer.onmousedown = textEditing;
+    //** this.formatContainer.onselectstart = textEditing;
+    //** this.formatContainer.onmousedown = textEditing;
 		this.footerContainer.onselectstart = textEditing;
 		this.footerContainer.onmousedown = textEditing;
 
@@ -1944,7 +1944,7 @@ EditorUi.prototype.addChromelessClickHandler = function()
 EditorUi.prototype.toggleFormatPanel = function(forceHide)
 {
 	this.formatWidth = (forceHide || this.formatWidth > 0) ? 0 : 240;
-	this.formatContainer.style.display = (forceHide || this.formatWidth > 0) ? '' : 'none';
+  //** this.formatContainer.style.display = (forceHide || this.formatWidth > 0) ? '' : 'none';
 	this.refresh();
 	this.format.refresh();
 	this.fireEvent(new mxEventObject('formatWidthChanged'));
@@ -1966,8 +1966,7 @@ EditorUi.prototype.lightboxFit = function()
  */
 EditorUi.prototype.isSelectionAllowed = function(evt)
 {
-	return mxEvent.getSource(evt).nodeName == 'SELECT' || (mxEvent.getSource(evt).nodeName == 'INPUT' &&
-		mxUtils.isAncestorNode(this.formatContainer, mxEvent.getSource(evt)));
+	return mxEvent.getSource(evt).nodeName == 'SELECT' || (mxEvent.getSource(evt).nodeName == 'INPUT'); //mxUtils.isAncestorNode(this.formatContainer, mxEvent.getSource(evt)));
 };
 
 /**
@@ -1978,13 +1977,13 @@ EditorUi.prototype.addBeforeUnloadListener = function()
 {
 	// Installs dialog if browser window is closed without saving
 	// This must be disabled during save and image export
-	window.onbeforeunload = mxUtils.bind(this, function()
+	/*window.onbeforeunload = mxUtils.bind(this, function()
 	{
 		if (!this.editor.chromeless)
 		{
 			return this.onBeforeUnload();
 		}
-	});
+	});*/
 };
 
 /**
@@ -2641,9 +2640,9 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 	var fw = (this.format != null) ? this.formatWidth : 0;
 	this.sidebarContainer.style.top = tmp + 'px';
 	this.sidebarContainer.style.width = effHsplitPosition + 'px';
-	this.formatContainer.style.top = tmp + 'px';
-	this.formatContainer.style.width = fw + 'px';
-	this.formatContainer.style.display = (this.format != null) ? '' : 'none';
+	//** this.formatContainer.style.top = tmp + 'px';
+  //** this.formatContainer.style.width = fw + 'px';
+  //** this.formatContainer.style.display = (this.format != null) ? '' : 'none';
 
 	this.diagramContainer.style.left = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) + 'px' : '0px';
 	this.diagramContainer.style.top = this.sidebarContainer.style.top;
@@ -2663,7 +2662,7 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 		this.toolbarContainer.style.width = this.menubarContainer.style.width;
 		var sidebarHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
 		this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
-		this.formatContainer.style.height = sidebarHeight + 'px';
+    //** this.formatContainer.style.height = sidebarHeight + 'px';
 		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize - fw) + 'px' : w + 'px';
 		this.footerContainer.style.width = this.menubarContainer.style.width;
 		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
@@ -2696,7 +2695,7 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 		}
 
 		this.sidebarContainer.style.bottom = (this.footerHeight + sidebarFooterHeight + off) + 'px';
-		this.formatContainer.style.bottom = (this.footerHeight + off) + 'px';
+    //** this.formatContainer.style.bottom = (this.footerHeight + off) + 'px';
 		this.diagramContainer.style.bottom = (this.footerHeight + off + th) + 'px';
 	}
 
@@ -2722,7 +2721,7 @@ EditorUi.prototype.createDivs = function()
 	//* this.menubarContainer = this.createDiv('geMenubarContainer');
 	this.toolbarContainer = this.createDiv('geToolbarContainer');
 	this.sidebarContainer = this.createDiv('geSidebarContainer');
-	this.formatContainer = this.createDiv('geSidebarContainer');
+  //** this.formatContainer = this.createDiv('geSidebarContainer');
 	this.diagramContainer = this.createDiv('geDiagramContainer');
 	this.footerContainer = this.createDiv('geFooterContainer');
 	this.hsplit = this.createDiv('geHsplit');
@@ -2735,8 +2734,8 @@ EditorUi.prototype.createDivs = function()
 	this.toolbarContainer.style.left = '0px';
 	this.toolbarContainer.style.right = '0px';
 	this.sidebarContainer.style.left = '0px';
-	this.formatContainer.style.right = '0px';
-	this.formatContainer.style.zIndex = '1';
+  //** this.formatContainer.style.right = '0px';
+  //** this.formatContainer.style.zIndex = '1';
 	this.diagramContainer.style.right = ((this.format != null) ? this.formatWidth : 0) + 'px';
 	this.footerContainer.style.left = '0px';
 	this.footerContainer.style.right = '0px';
@@ -2745,10 +2744,10 @@ EditorUi.prototype.createDivs = function()
 	this.hsplit.style.width = this.splitSize + 'px';
 
 	// Only vertical scrollbars, no background in format sidebar
-	this.formatContainer.style.backgroundColor = 'whiteSmoke';
-	this.formatContainer.style.overflowX = 'hidden';
-	this.formatContainer.style.overflowY = 'auto';
-	this.formatContainer.style.fontSize = '12px';
+  //** this.formatContainer.style.backgroundColor = 'whiteSmoke';
+  //** this.formatContainer.style.overflowX = 'hidden';
+  //** this.formatContainer.style.overflowY = 'auto';
+  //** this.formatContainer.style.fontSize = '12px';
 
 	this.sidebarFooterContainer = this.createSidebarFooterContainer();
 
@@ -2811,12 +2810,12 @@ EditorUi.prototype.createUi = function()
 	}
 
 	// Creates the format sidebar
-	this.format = (this.editor.chromeless || !this.formatEnabled) ? null : this.createFormat(this.formatContainer);
+  //** this.format = (this.editor.chromeless || !this.formatEnabled) ? null : this.createFormat(this.formatContainer);
 
-	if (this.format != null)
+	/*if (this.format != null)
 	{
 		this.container.appendChild(this.formatContainer);
-	}
+	}*/
 
 	// Creates the footer
 	var footer = (this.editor.chromeless) ? null : this.createFooter();
@@ -3900,8 +3899,8 @@ EditorUi.prototype.destroy = function()
 		this.destroyFunctions = null;
 	}
 
-	var c = [this.menubarContainer, this.toolbarContainer, this.sidebarContainer,
-	         this.formatContainer, this.diagramContainer, this.footerContainer,
+	var c = [this.toolbarContainer, this.sidebarContainer,
+	         this.diagramContainer, this.footerContainer,
 	         this.chromelessToolbar, this.hsplit, this.sidebarFooterContainer,
 	         this.layersDialog];
 

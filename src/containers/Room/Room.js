@@ -137,7 +137,7 @@ export default class Room extends RoleAwareComponent {
               }
               </div>
               <div
-                className={`col-md-3 col-sm-12 ${style.marginTop}`}>
+                className={`col-md-3 col-sm-12`}>
                 <Chat messages={room.messages}
                   userId={user && user._id}
                   sendMessage={this.sendMessage}
