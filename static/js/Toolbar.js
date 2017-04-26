@@ -220,7 +220,7 @@ Toolbar.prototype.createTextToolbar = function()
 {
 	var graph = this.editorUi.editor.graph;
 
-	var styleElt = this.addMenu('', mxResources.get('style'), true, 'formatBlock');
+	/*var styleElt = this.addMenu('', mxResources.get('style'), true, 'formatBlock');
 	styleElt.style.position = 'relative';
 	styleElt.style.whiteSpace = 'nowrap';
 	styleElt.style.overflow = 'hidden';
@@ -250,7 +250,7 @@ Toolbar.prototype.createTextToolbar = function()
 		this.fontMenu.getElementsByTagName('img')[0].style.top = '5px';
 	}
 
-	this.addSeparator();
+	this.addSeparator();*/
 
 	this.sizeMenu = this.addMenu(Menus.prototype.defaultFontSize, mxResources.get('fontSize'), true, 'fontSize');
 	this.sizeMenu.style.position = 'relative';
@@ -276,7 +276,7 @@ Toolbar.prototype.createTextToolbar = function()
 
 	// KNOWN: Lost focus after click on submenu with text (not icon) in quirks and IE8. This is because the TD seems
 	// to catch the focus on click in these browsers. NOTE: Workaround in mxPopupMenu for icon items (without text).
-	var alignMenu = this.addMenuFunction('', mxResources.get('align'), false, mxUtils.bind(this, function(menu)
+	/*var alignMenu = this.addMenuFunction('', mxResources.get('align'), false, mxUtils.bind(this, function(menu)
 	{
 		elt = menu.addItem('', null, mxUtils.bind(this, function()
 		{
@@ -337,9 +337,9 @@ Toolbar.prototype.createTextToolbar = function()
 	{
 		alignMenu.getElementsByTagName('img')[0].style.left = '22px';
 		alignMenu.getElementsByTagName('img')[0].style.top = '5px';
-	}
+	}*/
 
-	var formatMenu = this.addMenuFunction('', mxResources.get('format'), false, mxUtils.bind(this, function(menu)
+	/*var formatMenu = this.addMenuFunction('', mxResources.get('format'), false, mxUtils.bind(this, function(menu)
 	{
 		elt = menu.addItem('', null, this.editorUi.actions.get('subscript').funct,
 			null, 'geIcon geSprite geSprite-subscript');
@@ -622,13 +622,13 @@ Toolbar.prototype.createTextToolbar = function()
 	elt.style.overflow = 'hidden';
 	elt.innerHTML = '<div class="geSprite geSprite-table" style="margin-left:-2px;"></div>' + this.dropdownImageHtml;
 	elt.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
-
-	// Fix for item size in kennedy theme
+*/
+	/*// Fix for item size in kennedy theme
 	if (EditorUi.compactUi)
 	{
 		elt.getElementsByTagName('img')[0].style.left = '22px';
 		elt.getElementsByTagName('img')[0].style.top = '5px';
-	}
+	}*/
 };
 
 /**

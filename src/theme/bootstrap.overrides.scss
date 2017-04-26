@@ -19,9 +19,14 @@
   width: 90%;
 }
 
-#container *, div.geToolbarMenu {
+#container *, div.geToolbarMenu, .geDialog {
   box-sizing: content-box !important;
   -webkit-box-sizing: content-box !important;
+}
+
+#container {
+  border-radius: 4px;
+  border: 1px solid #dddddd;
 }
 
 .mxPopupMenu tr td hr {

@@ -115,7 +115,7 @@ Menus.prototype.init = function()
 	})));
 	this.put('fontSize', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		var sizes = [6, 8, 9, 10, 11, 12, 14, 18, 24, 36, 48, 72];
+		var sizes = [9, 11, 14, 18, 24, 48, 72];
 
 		var addItem = mxUtils.bind(this, function(fontsize)
 		{
@@ -147,7 +147,7 @@ Menus.prototype.init = function()
 			addItem(sizes[i]);
 		}
 
-		menu.addSeparator(parent);
+		/*menu.addSeparator(parent);
 
 		if (this.customFontSizes.length > 0)
 		{
@@ -169,7 +169,7 @@ Menus.prototype.init = function()
 		this.promptChange(menu, mxResources.get('custom') + '...', '(pt)', '12', mxConstants.STYLE_FONTSIZE, parent, true, mxUtils.bind(this, function(newValue)
 		{
 			this.customFontSizes.push(newValue);
-		}));
+		}));*/
 	})));
 	this.put('direction', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -867,7 +867,7 @@ Menus.prototype.pickColor = function(key, cmd, defaultValue)
 		{
 			graph.cellEditor.restoreSelection(selState);
 		});
-		this.editorUi.showDialog(dlg.container, 220, 430, true, true);
+		this.editorUi.showDialog(dlg.container, 220, 150, true, true);
 		dlg.init();
 	}
 	else
@@ -897,7 +897,7 @@ Menus.prototype.pickColor = function(key, cmd, defaultValue)
 			this.colorDialog.picker.fromString(color);
 		}
 
-		this.editorUi.showDialog(this.colorDialog.container, 220, 430, true, true);
+		this.editorUi.showDialog(this.colorDialog.container, 220, 150, true, true);
 		this.colorDialog.init();
 	}
 };

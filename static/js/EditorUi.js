@@ -72,8 +72,8 @@ EditorUi = function(editor, container, lightbox)
 		this.sidebarContainer.onmousedown = textEditing;
     //** this.formatContainer.onselectstart = textEditing;
     //** this.formatContainer.onmousedown = textEditing;
-		this.footerContainer.onselectstart = textEditing;
-		this.footerContainer.onmousedown = textEditing;
+		// this.footerContainer.onselectstart = textEditing;
+		// this.footerContainer.onmousedown = textEditing;
 
 		if (this.tabContainer != null)
 		{
@@ -915,7 +915,7 @@ EditorUi.prototype.toolbarHeight = 34;
 /**
  * Specifies the height of the footer. Default is 28.
  */
-EditorUi.prototype.footerHeight = 28;
+EditorUi.prototype.footerHeight = 0;
 
 /**
  * Specifies the height of the optional sidebarFooterContainer. Default is 34.
@@ -2646,7 +2646,7 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 
 	this.diagramContainer.style.left = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) + 'px' : '0px';
 	this.diagramContainer.style.top = this.sidebarContainer.style.top;
-	this.footerContainer.style.height = this.footerHeight + 'px';
+	// this.footerContainer.style.height = this.footerHeight + 'px';
 	this.hsplit.style.top = this.sidebarContainer.style.top;
 	this.hsplit.style.bottom = (this.footerHeight + off) + 'px';
 	this.hsplit.style.left = effHsplitPosition + 'px';
@@ -2664,7 +2664,7 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 		this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
     //** this.formatContainer.style.height = sidebarHeight + 'px';
 		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize - fw) + 'px' : w + 'px';
-		this.footerContainer.style.width = this.menubarContainer.style.width;
+		// this.footerContainer.style.width = this.menubarContainer.style.width;
 		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
 
 		if (this.tabContainer != null)
@@ -2679,10 +2679,10 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 	}
 	else
 	{
-		if (this.footerHeight > 0)
+		/*if (this.footerHeight > 0)
 		{
 			this.footerContainer.style.bottom = off + 'px';
-		}
+		}*/
 
 		this.diagramContainer.style.right = fw + 'px';
 		var th = 0;
@@ -2723,7 +2723,7 @@ EditorUi.prototype.createDivs = function()
 	this.sidebarContainer = this.createDiv('geSidebarContainer');
   //** this.formatContainer = this.createDiv('geSidebarContainer');
 	this.diagramContainer = this.createDiv('geDiagramContainer');
-	this.footerContainer = this.createDiv('geFooterContainer');
+	// this.footerContainer = this.createDiv('geFooterContainer');
 	this.hsplit = this.createDiv('geHsplit');
 	this.hsplit.setAttribute('title', mxResources.get('collapseExpand'));
 
@@ -2737,10 +2737,10 @@ EditorUi.prototype.createDivs = function()
   //** this.formatContainer.style.right = '0px';
   //** this.formatContainer.style.zIndex = '1';
 	this.diagramContainer.style.right = ((this.format != null) ? this.formatWidth : 0) + 'px';
-	this.footerContainer.style.left = '0px';
-	this.footerContainer.style.right = '0px';
-	this.footerContainer.style.bottom = '0px';
-	this.footerContainer.style.zIndex = mxPopupMenu.prototype.zIndex - 2;
+	// this.footerContainer.style.left = '0px';
+	// this.footerContainer.style.right = '0px';
+	// this.footerContainer.style.bottom = '0px';
+	// this.footerContainer.style.zIndex = mxPopupMenu.prototype.zIndex - 2;
 	this.hsplit.style.width = this.splitSize + 'px';
 
 	// Only vertical scrollbars, no background in format sidebar
@@ -2820,11 +2820,11 @@ EditorUi.prototype.createUi = function()
 	// Creates the footer
 	var footer = (this.editor.chromeless) ? null : this.createFooter();
 
-	if (footer != null)
+	/*if (footer != null)
 	{
 		this.footerContainer.appendChild(footer);
 		this.container.appendChild(this.footerContainer);
-	}
+	}*/
 
 	if (this.sidebar != null && this.sidebarFooterContainer)
 	{
@@ -3054,7 +3054,7 @@ EditorUi.prototype.pickColor = function(color, apply)
 	{
 		graph.cellEditor.restoreSelection(selState);
 	});
-	this.showDialog(dlg.container, 220, 430, true, false);
+	this.showDialog(dlg.container, 220, 150, true, false);
 	dlg.init();
 };
 
@@ -3900,7 +3900,7 @@ EditorUi.prototype.destroy = function()
 	}
 
 	var c = [this.toolbarContainer, this.sidebarContainer,
-	         this.diagramContainer, this.footerContainer,
+	         this.diagramContainer,
 	         this.chromelessToolbar, this.hsplit, this.sidebarFooterContainer,
 	         this.layersDialog];
 

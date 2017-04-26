@@ -114,7 +114,7 @@ export default class Room extends RoleAwareComponent {
   }
 
   isSmallScreen() {
-    return this.getWindowWidth() <= this.COL_SM_MAX;
+    return getWindowWidth() <= this.COL_SM_MAX;
   }
 
   render() {
@@ -137,7 +137,7 @@ export default class Room extends RoleAwareComponent {
               }
               </div>
               <div
-                className={`col-md-3 col-sm-12`}>
+                className={`col-md-3 col-sm-12 ${this.isSmallScreen() && style.marginTop}`}>
                 <Chat messages={room.messages}
                   userId={user && user._id}
                   sendMessage={this.sendMessage}
