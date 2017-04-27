@@ -4,11 +4,12 @@ export default class Room extends Component {
 
   static propTypes = {
     room: PropTypes.object.isRequired,
-    blockHeight: PropTypes.number.isRequired
+    blockHeight: PropTypes.number.isRequired,
+    hasPermission: PropTypes.func.isRequired
   };
 
   componentDidMount() {
-    const room = this.props.room;
+    const {room, hasPermission} = this.props;
 
     if (socket && __CLIENT__) {
       (function()
@@ -77,11 +78,15 @@ export default class Room extends Component {
           themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
 
           const container = document.getElementById('container');
-          const editorUI = new EditorUi(new Editor(urlParams['chrome'] == '0', themes), container);
+          const isEditor = hasPermission('write');
+
+          const editorUI = new EditorUi(new Editor(urlParams['chrome'] == '0', themes), container, null, isEditor);
 
           editorUI.actions.get('pageView').funct();
           editorUI.setGridColor('#A9C4EB');
           editorUI.editor.graph.setGridSize(15);
+          editorUI.editor.graph.setEnabled(isEditor);
+
         });
       })();
     }

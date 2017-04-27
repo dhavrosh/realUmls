@@ -121,6 +121,7 @@ export default class Room extends RoleAwareComponent {
     const { room, error } = this.state;
     const { user } = this.props;
     const style = require('./Room.scss');
+    const hasPermission = this.hasPermission.bind(this);
 
     let blockHeight = this.DEFAULT_BLOCK_HEIGHT; // this.state.blockHeight
 
@@ -132,7 +133,12 @@ export default class Room extends RoleAwareComponent {
             <div className={`${style.marginTop} row`}>
               <div className="col-md-9 col-sm-12">
               {
-                this.isDiagramAppropriate() && <Diagram room={room} blockHeight={blockHeight}/>
+                this.isDiagramAppropriate() &&
+                  <Diagram
+                    room={room}
+                    blockHeight={blockHeight}
+                    hasPermission={hasPermission}
+                  />
                 || 'Use device with bigger screen resolution, diagram is not available here'
               }
               </div>
@@ -142,6 +148,7 @@ export default class Room extends RoleAwareComponent {
                   userId={user && user._id}
                   sendMessage={this.sendMessage}
                   blockHeight={blockHeight}
+                  hasPermission={hasPermission}
                 />
               </div>
             </div>

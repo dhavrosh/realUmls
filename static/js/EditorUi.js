@@ -4,10 +4,12 @@
 /**
  * Constructs a new graph editor
  */
-EditorUi = function(editor, container, lightbox)
+EditorUi = function(editor, container, lightbox, isExtended)
 {
 	mxEventSource.call(this);
 	this.destroyFunctions = [];
+
+	this.isExtended = isExtended || false;
 
 	this.editor = editor || new Editor();
 	this.container = container || document.body;
@@ -62,14 +64,15 @@ EditorUi = function(editor, container, lightbox)
 	// Disables text selection while not editing and no dialog visible
 	if (this.container == document.body)
 	{
-		//* this.menubarContainer.onselectstart = textEditing;
-		//* this.menubarContainer.onmousedown = textEditing;
-		this.toolbarContainer.onselectstart = textEditing;
-		this.toolbarContainer.onmousedown = textEditing;
+		if (this.isExtended) {
+      this.toolbarContainer.onselectstart = textEditing;
+      this.toolbarContainer.onmousedown = textEditing;
+      this.sidebarContainer.onselectstart = textEditing;
+      this.sidebarContainer.onmousedown = textEditing;
+    }
+
 		this.diagramContainer.onselectstart = textEditing;
 		this.diagramContainer.onmousedown = textEditing;
-		this.sidebarContainer.onselectstart = textEditing;
-		this.sidebarContainer.onmousedown = textEditing;
     //** this.formatContainer.onselectstart = textEditing;
     //** this.formatContainer.onmousedown = textEditing;
 		// this.footerContainer.onselectstart = textEditing;
@@ -341,10 +344,11 @@ EditorUi = function(editor, container, lightbox)
     // Installs context menu
 	if (this.menus != null)
 	{
-		graph.popupMenuHandler.factoryMethod = mxUtils.bind(this, function(menu, cell, evt)
-		{
-			this.menus.createPopupMenu(menu, cell, evt);
-		});
+	  if (this.isExtended) {
+      graph.popupMenuHandler.factoryMethod = mxUtils.bind(this, function (menu, cell, evt) {
+        this.menus.createPopupMenu(menu, cell, evt);
+      });
+    }
 	}
 
 	// Hides context menu
@@ -2576,50 +2580,46 @@ EditorUi.prototype.updateActionStates = function()
 /**
  * Refreshes the viewport.
  */
-EditorUi.prototype.refresh = function(sizeDidChange)
-{
-	sizeDidChange = (sizeDidChange != null) ? sizeDidChange : true;
+EditorUi.prototype.refresh = function(sizeDidChange) {
+  sizeDidChange = (sizeDidChange != null) ? sizeDidChange : true;
 
-	var quirks = mxClient.IS_IE && (document.documentMode == null || document.documentMode == 5);
-	var w = this.container.clientWidth;
-	var h = this.container.clientHeight;
+  var quirks = mxClient.IS_IE && (document.documentMode == null || document.documentMode == 5);
+  var w = this.container.clientWidth;
+  var h = this.container.clientHeight;
 
-	if (this.container == document.body)
-	{
-		w = document.body.clientWidth || document.documentElement.clientWidth;
-		h = (quirks) ? document.body.clientHeight || document.documentElement.clientHeight : document.documentElement.clientHeight;
-	}
+  if (this.container == document.body) {
+    w = document.body.clientWidth || document.documentElement.clientWidth;
+    h = (quirks) ? document.body.clientHeight || document.documentElement.clientHeight : document.documentElement.clientHeight;
+  }
 
-	// Workaround for bug on iOS see
-	// http://stackoverflow.com/questions/19012135/ios-7-ipad-safari-landscape-innerheight-outerheight-layout-issue
-	// FIXME: Fix if footer visible
-	var off = 0;
+  // Workaround for bug on iOS see
+  // http://stackoverflow.com/questions/19012135/ios-7-ipad-safari-landscape-innerheight-outerheight-layout-issue
+  // FIXME: Fix if footer visible
+  var off = 0;
 
-	if (mxClient.IS_IOS && !window.navigator.standalone)
-	{
-		if (window.innerHeight != document.documentElement.clientHeight)
-		{
-			off = document.documentElement.clientHeight - window.innerHeight;
-			window.scrollTo(0, 0);
-		}
-	}
+  if (mxClient.IS_IOS && !window.navigator.standalone) {
+    if (window.innerHeight != document.documentElement.clientHeight) {
+      off = document.documentElement.clientHeight - window.innerHeight;
+      window.scrollTo(0, 0);
+    }
+  }
 
-	var effHsplitPosition = Math.max(0, Math.min(this.hsplitPosition, w - this.splitSize - 20));
+  var effHsplitPosition = Math.max(0, Math.min(this.hsplitPosition, w - this.splitSize - 20));
 
-	var tmp = 0;
+  var tmp = 0;
 
-	if (this.menubar != null)
-	{
-		//* this.menubarContainer.style.height = this.menubarHeight + 'px';
-		tmp += this.menubarHeight;
-	}
+  if (this.menubar != null) {
+    //* this.menubarContainer.style.height = this.menubarHeight + 'px';
+    tmp += this.menubarHeight;
+  }
 
-	if (this.toolbar != null)
-	{
-		this.toolbarContainer.style.top = this.menubarHeight + 'px';
-		this.toolbarContainer.style.height = this.toolbarHeight + 'px';
-		tmp += this.toolbarHeight;
-	}
+  if (this.isExtended) {
+    if (this.toolbar != null) {
+      this.toolbarContainer.style.top = this.menubarHeight + 'px';
+      this.toolbarContainer.style.height = this.toolbarHeight + 'px';
+      tmp += this.toolbarHeight;
+    }
+  }
 
 	if (tmp > 0 && !mxClient.IS_QUIRKS)
 	{
@@ -2638,16 +2638,19 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 	}
 
 	var fw = (this.format != null) ? this.formatWidth : 0;
-	this.sidebarContainer.style.top = tmp + 'px';
-	this.sidebarContainer.style.width = effHsplitPosition + 'px';
+  if (this.isExtended) {
+    this.sidebarContainer.style.top = tmp + 'px';
+    this.sidebarContainer.style.width = effHsplitPosition + 'px';
+    var sidebarHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
+      this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
+  }
 	//** this.formatContainer.style.top = tmp + 'px';
   //** this.formatContainer.style.width = fw + 'px';
   //** this.formatContainer.style.display = (this.format != null) ? '' : 'none';
 
 	this.diagramContainer.style.left = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) + 'px' : '0px';
-	this.diagramContainer.style.top = this.sidebarContainer.style.top;
-	// this.footerContainer.style.height = this.footerHeight + 'px';
-	this.hsplit.style.top = this.sidebarContainer.style.top;
+	this.diagramContainer.style.top = this.isExtended ? this.sidebarContainer.style.top : '0px';
+	this.hsplit.style.top = this.isExtended ? this.sidebarContainer.style.top : '0px';
 	this.hsplit.style.bottom = (this.footerHeight + off) + 'px';
 	this.hsplit.style.left = effHsplitPosition + 'px';
 
@@ -2658,11 +2661,10 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 
 	if (quirks)
 	{
-		//* this.menubarContainer.style.width = w + 'px';
-		this.toolbarContainer.style.width = this.menubarContainer.style.width;
-		var sidebarHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
-		this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
-    //** this.formatContainer.style.height = sidebarHeight + 'px';
+		if (this.isExtended) {
+      this.toolbarContainer.style.width = this.menubarContainer.style.width;
+    }
+		//** this.formatContainer.style.height = sidebarHeight + 'px';
 		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize - fw) + 'px' : w + 'px';
 		// this.footerContainer.style.width = this.menubarContainer.style.width;
 		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
@@ -2692,9 +2694,10 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 			this.tabContainer.style.bottom = (this.footerHeight + off) + 'px';
 			this.tabContainer.style.right = this.diagramContainer.style.right;
 			th = this.tabContainer.clientHeight;
-		}
-
-		this.sidebarContainer.style.bottom = (this.footerHeight + sidebarFooterHeight + off) + 'px';
+			if (this.isExtended) {
+        this.sidebarContainer.style.bottom = (this.footerHeight + sidebarFooterHeight + off) + 'px';
+      }
+    }
     //** this.formatContainer.style.bottom = (this.footerHeight + off) + 'px';
 		this.diagramContainer.style.bottom = (this.footerHeight + off + th) + 'px';
 	}
@@ -2704,6 +2707,7 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 		this.editor.graph.sizeDidChange();
 	}
 };
+
 
 /**
  * Creates the required containers.
@@ -2718,12 +2722,15 @@ EditorUi.prototype.createTabContainer = function()
  */
 EditorUi.prototype.createDivs = function()
 {
-	//* this.menubarContainer = this.createDiv('geMenubarContainer');
-	this.toolbarContainer = this.createDiv('geToolbarContainer');
-	this.sidebarContainer = this.createDiv('geSidebarContainer');
-  //** this.formatContainer = this.createDiv('geSidebarContainer');
+  if (this.isExtended) {
+    this.toolbarContainer = this.createDiv('geToolbarContainer');
+    this.toolbarContainer.style.left = '0px';
+    this.toolbarContainer.style.right = '0px';
+    this.sidebarContainer = this.createDiv('geSidebarContainer');
+    this.sidebarContainer.style.left = '0px';
+  }
+
 	this.diagramContainer = this.createDiv('geDiagramContainer');
-	// this.footerContainer = this.createDiv('geFooterContainer');
 	this.hsplit = this.createDiv('geHsplit');
 	this.hsplit.setAttribute('title', mxResources.get('collapseExpand'));
 
@@ -2731,9 +2738,6 @@ EditorUi.prototype.createDivs = function()
 	//* this.menubarContainer.style.top = '0px';
 	//* this.menubarContainer.style.left = '0px';
 	//* this.menubarContainer.style.right = '0px';
-	this.toolbarContainer.style.left = '0px';
-	this.toolbarContainer.style.right = '0px';
-	this.sidebarContainer.style.left = '0px';
   //** this.formatContainer.style.right = '0px';
   //** this.formatContainer.style.zIndex = '1';
 	this.diagramContainer.style.right = ((this.format != null) ? this.formatWidth : 0) + 'px';
@@ -2801,36 +2805,6 @@ EditorUi.prototype.createUi = function()
 		//* this.container.appendChild(this.menubarContainer);
 	}
 
-	// Creates the sidebar
-	this.sidebar = (this.editor.chromeless) ? null : this.createSidebar(this.sidebarContainer);
-
-	if (this.sidebar != null)
-	{
-		this.container.appendChild(this.sidebarContainer);
-	}
-
-	// Creates the format sidebar
-  //** this.format = (this.editor.chromeless || !this.formatEnabled) ? null : this.createFormat(this.formatContainer);
-
-	/*if (this.format != null)
-	{
-		this.container.appendChild(this.formatContainer);
-	}*/
-
-	// Creates the footer
-	var footer = (this.editor.chromeless) ? null : this.createFooter();
-
-	/*if (footer != null)
-	{
-		this.footerContainer.appendChild(footer);
-		this.container.appendChild(this.footerContainer);
-	}*/
-
-	if (this.sidebar != null && this.sidebarFooterContainer)
-	{
-		this.container.appendChild(this.sidebarFooterContainer);
-	}
-
 	this.container.appendChild(this.diagramContainer);
 
 	if (this.container != null && this.tabContainer != null)
@@ -2839,13 +2813,26 @@ EditorUi.prototype.createUi = function()
 	}
 
 	// Creates toolbar
-	this.toolbar = (this.editor.chromeless) ? null : this.createToolbar(this.createDiv('geToolbar'));
+  if (this.isExtended) {
+    this.toolbar = (this.editor.chromeless) ? null : this.createToolbar(this.createDiv('geToolbar'));
 
-	if (this.toolbar != null)
-	{
-		this.toolbarContainer.appendChild(this.toolbar.container);
-		this.container.appendChild(this.toolbarContainer);
-	}
+    if (this.toolbar != null) {
+      this.toolbarContainer.appendChild(this.toolbar.container);
+      this.container.appendChild(this.toolbarContainer);
+    }
+
+    this.sidebar = (this.editor.chromeless) ? null : this.createSidebar(this.sidebarContainer);
+
+    if (this.sidebar != null)
+    {
+      this.container.appendChild(this.sidebarContainer);
+    }
+
+    if (this.sidebar != null && this.sidebarFooterContainer)
+    {
+      this.container.appendChild(this.sidebarFooterContainer);
+    }
+  }
 
 	// HSplit
 	if (this.sidebar != null)
@@ -3899,7 +3886,7 @@ EditorUi.prototype.destroy = function()
 		this.destroyFunctions = null;
 	}
 
-	var c = [this.toolbarContainer, this.sidebarContainer,
+	var c = [
 	         this.diagramContainer,
 	         this.chromelessToolbar, this.hsplit, this.sidebarFooterContainer,
 	         this.layersDialog];

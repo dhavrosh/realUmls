@@ -8,7 +8,8 @@ export default class Room extends Component {
     userId: PropTypes.string.isRequired,
     messages: PropTypes.array.isRequired,
     sendMessage: PropTypes.func.isRequired,
-    blockHeight: PropTypes.number.isRequired
+    blockHeight: PropTypes.number.isRequired,
+    hasPermission: PropTypes.func.isRequired,
   };
 
   state = {
@@ -24,8 +25,14 @@ export default class Room extends Component {
   }
 
   calculateBodyHeight(total) {
-    const footerHeight = getElementHeight('#chat-footer');
-    return total - footerHeight;
+    let bodyHeight;
+
+    if (this.props.hasPermission('write')) {
+      const footerHeight = getElementHeight('#chat-footer');
+      bodyHeight = total - footerHeight;
+    } else bodyHeight = total;
+
+    return bodyHeight;
   }
 
   handleSubmit = event => {
@@ -40,9 +47,8 @@ export default class Room extends Component {
   };
 
   render() {
-    const { messages, userId } = this.props;
+    const { messages, userId, hasPermission } = this.props;
     const style = require('./Chat.scss');
-
     const bodyHeight = this.state.bodyHeight;
 
     return (
@@ -60,30 +66,32 @@ export default class Room extends Component {
             )}
           </ul>
         </div>
-        <div
-          id="chat-footer"
-          className="panel-footer">
-          <form onSubmit={this.handleSubmit}>
-            <div className="input-group">
-              <input
-                id="btn-input"
-                type="text"
-                ref="message"
-                className="form-control input-sm"
-                value={this.state.message}
-                onChange={event => this.setState({message: event.target.value})}
-                placeholder="Type your message here..." />
-              <span className="input-group-btn">
-                  <button
-                    className="btn btn-info btn-sm"
-                    id="btn-chat"
-                    onClick={ this.handleSubmit }>
-                    Send
-                  </button>
-              </span>
+        {
+          hasPermission('write') &&
+            <div id="chat-footer"
+                className="panel-footer">
+                <form onSubmit={this.handleSubmit}>
+                  <div className="input-group">
+                    <input
+                      id="btn-input"
+                      type="text"
+                      ref="message"
+                      className="form-control input-sm"
+                      value={this.state.message}
+                      onChange={event => this.setState({message: event.target.value})}
+                      placeholder="Type your message here..." />
+                    <span className="input-group-btn">
+                        <button
+                          className="btn btn-info btn-sm"
+                          id="btn-chat"
+                          onClick={ this.handleSubmit }>
+                          Send
+                        </button>
+                    </span>
+                  </div>
+                </form>
             </div>
-          </form>
-        </div>
+        }
       </div>
     );
   }
