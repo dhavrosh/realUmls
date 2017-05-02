@@ -25,7 +25,8 @@ export default class RoomModal extends Component {
   }
 
   addMember() {
-    const memberObj = { email: '', role: '' };
+    const defaultRole = this.props.roles[0]._id;
+    const memberObj = { email: '', role: defaultRole };
     this.setState({
       ...this.state,
       members: [...this.state.members, memberObj]
@@ -41,34 +42,28 @@ export default class RoomModal extends Component {
     });
   }
 
-  selectRole(memberPosition, roleTitle) {
+  updateMember(memberPosition, prop, value, worker) {
     const member = this.state.members[memberPosition];
-    member.role = this.props.roles.find(role => role.title === roleTitle)._id;
+    member[prop] = worker(value);
     this.setState({
       ...this.state,
       members: [...this.state.members]
     });
   }
 
+  getRoleId(title) {
+    return this.props.roles.find(role => role.title === title)._id;
+  }
+
+
   save() {
-    const title = this.refs.title;
-    const description = this.refs.description;
+    const {title, description, members} = this.state;
 
-    if (title.value && description.value) {
+    console.log(members);
+
+    if (title && description) {
       const data = this.props.data;
-      const args = [title.value, description.value];
-      const members = [];
-
-      this.state.members.forEach((member, index) => {
-        const key = `member-${index}`;
-        const email = this.refs[`${key}-email`].value;
-        const roleTitle = this.refs[`${key}-role`].value;
-        const role = this.props.roles.find(item => item.title === roleTitle)._id;
-
-        members.push({ email, role });
-      });
-
-      args.push(members);
+      const args = [title, description, members];
 
       if (data && data._id) {
         args.push(data._id);
@@ -76,10 +71,7 @@ export default class RoomModal extends Component {
 
       this.props.save(...args);
       this.props.close();
-      this.setState({ error: null });
-
-      title.value = '';
-      description.value = '';
+      this.setState({ title: '', description: '', error: null });
     } else {
       this.setState({ error: { message: 'All fields are required' }});
     }
@@ -135,43 +127,45 @@ export default class RoomModal extends Component {
                 <input
                   style={ bordered }
                   className="form-control"
-                  ref="title"
                   type="text"
                   placeholder="Enter your title"
                   defaultValue={ title }
+                  onChange={e => this.setState({title: e.target.value})}
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="description" style={ lined }>Description:</label>
+                <label htmlFor="description" style={lined}>Description:</label>
                 <textarea
                   style={ bordered }
                   className="form-control"
-                  ref="description"
                   placeholder="Enter your description"
                   defaultValue={ description }
+                  onChange={e => this.setState({description: e.target.value})}
                 />
               </div>
               <div className="form-group">
                 <div className="row">
                   <div className="col-md-12">
                     <label htmlFor="members" style={ lined }>Members:</label>
-                    <button className="btn btn-link btn-xs" style={memberCreateBtn} onClick={ this.addMember.bind(this) }>
+                    <button className="btn btn-link btn-xs" style={memberCreateBtn} onClick={this.addMember.bind(this)}>
                       Create
                     </button>
                   </div>
                 </div>
                 { members.map((member, index) => {
                   const key = `member-${index}`;
-                  const memberRole = roles.find(role => role._id === member.role).title;
+                  const memberRole = roles.find(role => role._id === member.role);
 
                   return (
                     <div className="row" style={memberRow} key={key}>
                       <div className="col-md-5 col-sm-5">
                         <input
                           type="text"
-                          ref={`${key}-email`}
                           placeholder="Enter member email"
                           defaultValue={member.email}
+                          onChange={
+                            e => this.updateMember(index, 'email', e.target.value, v => v)
+                          }
                           style={ bordered }
                           className="form-control"
                         />
@@ -180,10 +174,12 @@ export default class RoomModal extends Component {
                         <select
                           style={ bordered }
                           className="form-control"
-                          ref={`${key}-role`}
                           placeholder="Choose role"
-                          value={memberRole}
-                          onChange={event => this.selectRole(index, event.target.value)}>
+                          value={memberRole && memberRole.title}
+                          onChange={
+                            e => this.updateMember(index, 'role', e.target.value, this.getRoleId.bind(this))
+                          }
+                        >
                           { roles.map(role =>
                             <option value={role.title} key={`role-${role.title}`}>
                               {role.title}
