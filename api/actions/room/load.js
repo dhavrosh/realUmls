@@ -11,7 +11,6 @@ export default function load(req, [id]) {
         const room = await Room.findById(id).select('-__v').lean();
 
         if (room) {
-
           if (!room.isVisible) {
             const user = req.user;
             let permission = undefined;
@@ -25,17 +24,17 @@ export default function load(req, [id]) {
 
                 permission = await getMemberPermission(creator._id);
               } else {
-                const member = room.members.find(getEmailComparator(user.email));
+                const member = room.members.find(getKeyComparator(user.email));
 
                 if (member) {
                   permission = await getMemberPermission(member.role);
                 }
               }
             } else {
-              const {e: email} = req.query;
+              const {k: key} = req.query;
 
-              if (email) {
-                const member = room.members.find(getEmailComparator(email));
+              if (key) {
+                const member = room.members.find(getKeyComparator(key));
 
                 if (member) {
                   permission = await getMemberPermission(member.role);
@@ -61,8 +60,8 @@ export default function load(req, [id]) {
   });
 }
 
-function getEmailComparator(email) {
-  return item => item.email === email;
+function getKeyComparator(key) {
+  return item => item.key === key;
 }
 
 async function getMemberPermission(role) {

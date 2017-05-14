@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import nodemailer from 'nodemailer';
 import extend from 'deep-extend';
 import Room from '../../models/Room';
+import User from '../../models/User';
 
 export default function save(req, [id]) {
   return new Promise((resolve, reject) => {
@@ -17,7 +18,7 @@ export default function save(req, [id]) {
           const receivedMembers = req.body.members;
 
           if (Array.isArray(oldMembers) && Array.isArray(receivedMembers) && receivedMembers.length > 0) {
-            const membersToInform = getNewMembers(oldMembers, receivedMembers);
+            const membersToInform = getNewMembers(oldMembers, receivedMembers, room._id);
 
             if (membersToInform.length > 0) {
               informMembers(room._id, membersToInform);
@@ -26,6 +27,10 @@ export default function save(req, [id]) {
 
           extend(room, req.body);
         } else {
+          if (data.members) {
+            data.members.forEach(member => addKeyToMember(member, roomId));
+            informMembers(roomId, data.members);
+          }
           room = new Room(data);
         }
 
@@ -38,12 +43,12 @@ export default function save(req, [id]) {
   });
 }
 
-function getNewMembers(oldMembers, receivedMembers) {
+function getNewMembers(oldMembers, receivedMembers, roomId) {
   return receivedMembers.filter(receivedMember => {
     const isNew = typeof oldMembers.find(oldMember => oldMember.email === receivedMember.email) === 'undefined';
 
     if (isNew) {
-      receivedMember.key = mongoose.Types.ObjectId().toString();
+      addKeyToMember(receivedMember, roomId);
     }
 
     return isNew;
@@ -57,7 +62,7 @@ function informMembers(roomId, members) {
       from: 'dhavrosh@gmail.com',
       subject: 'Room ✔',
       text: 'Room ✔',
-      html: `<a href="http://localhost:3000/room/${roomId}?e=${member.email}">Room ✔</a>`
+      html: `<a href="http://localhost:3000/room/${roomId}?k=${member.key}">Room ✔</a>`
     };
 
     sendMail(options);
@@ -79,4 +84,17 @@ function sendMail(options) {
     }
     console.log('Message %s sent: %s', info.messageId, info.response);
   });
+}
+
+function addKeyToMember(member, roomId) {
+  const key = mongoose.Types.ObjectId().toString();
+
+  member.key = key;
+  User.findOne({email: member.email}).then(member => {
+    if (member) {
+      console.log('saving new key for member...');
+      member.keys.push({value: key, room: roomId});
+      member.save();
+    }
+  }).catch(err => console.error(err));
 }

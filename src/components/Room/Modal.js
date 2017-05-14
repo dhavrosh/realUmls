@@ -18,7 +18,6 @@ export default class RoomModal extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    console.log('room', nextProps);
     if (this.props !== nextProps) {
       this.setState({
         ...nextProps.data,

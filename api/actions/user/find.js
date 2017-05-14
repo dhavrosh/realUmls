@@ -1,5 +1,6 @@
 import User from '../../models/User';
 
+// TODO: prevent to find creator
 export default function load(req, [input]) {
   return new Promise((resolve, reject) => {
     const findUsers = async () => {
