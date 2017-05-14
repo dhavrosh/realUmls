@@ -85,14 +85,12 @@ export function loadOwn() {
   };
 }
 
-export function save(title, description, members, id) {
-  const url = id ? `/room/save/${id}` : '/room/save';
+export function save(data) {
+  const url = data.id ? `/room/save/${data.id}` : '/room/save';
 
   return {
     types: [SAVE, SAVE_SUCCESS, SAVE_FAIL],
-    promise: (client) => client.post(url, {
-      data: { title, description, members }
-    })
+    promise: (client) => client.post(url, {data})
   };
 }
 

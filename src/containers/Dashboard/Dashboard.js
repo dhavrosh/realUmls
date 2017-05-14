@@ -61,6 +61,7 @@ export default class Dashboard extends Component {
     return {
       title: '',
       description: '',
+      isVisible: false,
       members: []
     };
   }

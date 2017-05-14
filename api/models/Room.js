@@ -9,7 +9,8 @@ const MessageSchema = {
 
 const MemberSchema = new mongoose.Schema({
   email: { type: String, required: true },
-  role: { type: String, required: true }
+  role: { type: String, required: true },
+  key: { type: String, required: true }
 });
 
 const RoomSchema = new mongoose.Schema({
@@ -18,7 +19,8 @@ const RoomSchema = new mongoose.Schema({
   members: [MemberSchema],
   messages: [MessageSchema],
   description: String,
-  diagram: String
+  diagram: String,
+  isVisible: {type: Boolean, default: false}
 });
 
 export default mongoose.model('Room', RoomSchema);

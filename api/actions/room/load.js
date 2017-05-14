@@ -11,38 +11,45 @@ export default function load(req, [id]) {
         const room = await Room.findById(id).select('-__v').lean();
 
         if (room) {
-          const user = req.user;
-          let permission = undefined;
 
-          if (user) {
-            const creator = user._id == room.creator;
+          if (!room.isVisible) {
+            const user = req.user;
+            let permission = undefined;
 
-            if (creator) {
-              const options = {title: constants.roles.creator};
-              const creator = await Role.findOne(options).select('-title').lean();
+            if (user) {
+              const creator = user._id == room.creator;
 
-              permission = await getMemberPermission(creator._id);
+              if (creator) {
+                const options = {title: constants.roles.creator};
+                const creator = await Role.findOne(options).select('-title').lean();
+
+                permission = await getMemberPermission(creator._id);
+              } else {
+                const member = room.members.find(getEmailComparator(user.email));
+
+                if (member) {
+                  permission = await getMemberPermission(member.role);
+                }
+              }
             } else {
-              const member = room.members.find(getEmailComparator(user.email));
+              const {e: email} = req.query;
 
-              if (member) {
-                permission = await getMemberPermission(member.role);
+              if (email) {
+                const member = room.members.find(getEmailComparator(email));
+
+                if (member) {
+                  permission = await getMemberPermission(member.role);
+                }
               }
             }
-          } else {
-            const {e: email} = req.query;
 
-            if (email) {
-              const member = room.members.find(getEmailComparator(email));
-
-              permission = await getMemberPermission(member.role);
+            if (permission) {
+              resolve({room, permission});
+            } else {
+              reject({status: 401, message: 'Permission denied'});
             }
-          }
-
-          if (permission) {
-            resolve({room, permission});
           } else {
-            reject({status: 401, message: 'Permission denied'});
+
           }
         } else {
           reject({status: 400, message: 'Room not found'});

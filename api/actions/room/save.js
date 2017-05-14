@@ -20,7 +20,7 @@ export default function save(req, [id]) {
             const membersToInform = getNewMembers(oldMembers, receivedMembers);
 
             if (membersToInform.length > 0) {
-              informMembers(membersToInform);
+              informMembers(room._id, membersToInform);
             }
           }
 
@@ -39,23 +39,29 @@ export default function save(req, [id]) {
 }
 
 function getNewMembers(oldMembers, receivedMembers) {
-  return receivedMembers.filter(receivedMember =>
-    typeof oldMembers.find(oldMember => oldMember.email === receivedMember.email) === 'undefined'
-  );
+  return receivedMembers.filter(receivedMember => {
+    const isNew = typeof oldMembers.find(oldMember => oldMember.email === receivedMember.email) === 'undefined';
+
+    if (isNew) {
+      receivedMember.key = mongoose.Types.ObjectId().toString();
+    }
+
+    return isNew;
+  });
 }
 
-function informMembers(members) {
-  const to = members.map(member => member.email).join();
+function informMembers(roomId, members) {
+  members.forEach(member => {
+    const options = {
+      to: member.email,
+      from: 'dhavrosh@gmail.com',
+      subject: 'Room ✔',
+      text: 'Room ✔',
+      html: `<a href="http://localhost:3000/room/${roomId}?e=${member.email}">Room ✔</a>`
+    };
 
-  const options = {
-    to,
-    from: 'dhavrosh@gmail.com',
-    subject: 'Hello ✔',
-    text: 'Hello world ?',
-    html: '<b>Hello world ?</b>'
-  };
-
-  sendMail(options);
+    sendMail(options);
+  });
 }
 
 function sendMail(options) {

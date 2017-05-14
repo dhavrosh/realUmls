@@ -1,4 +1,6 @@
 import React, { Component, PropTypes } from 'react';
+import axios from 'axios';
+import Select from 'react-select';
 import Modal from 'react-bootstrap/lib/Modal';
 
 export default class RoomModal extends Component {
@@ -16,6 +18,7 @@ export default class RoomModal extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
+    console.log('room', nextProps);
     if (this.props !== nextProps) {
       this.setState({
         ...nextProps.data,
@@ -51,25 +54,49 @@ export default class RoomModal extends Component {
     });
   }
 
+  getOptions(input, value) {
+    return axios.get(`api/user/find/${input}`)
+      .then(({data}) => {
+        const options = data.map(user => ({value: user.email, label: user.username}));
+
+        if (!input && value && !this.checkOptions(value, options)) {
+          return {options: [{label: value, value}]};
+        }
+
+        return {options};
+      }).catch(err => console.error(err));
+  }
+
   getRoleId(title) {
     return this.props.roles.find(role => role.title === title)._id;
   }
 
+  checkOptions(value, options) {
+    return options.find(option => option.value === value);
+  }
+
+  checkMembers(members) {
+    return members.find(member => !member.email);
+  }
 
   save() {
-    const {title, description, members} = this.state;
+    const {title, description, isVisible} = this.state;
+    let members = this.state.members;
 
-    console.log(members);
-
-    if (title && description) {
+    if (title && description && !this.checkMembers(members)) {
       const data = this.props.data;
-      const args = [title, description, members];
+
+      members = members.map(member => ({
+        ...member, email: member.email.value || member.email
+      }));
+
+      const args = {title, description, members, isVisible};
 
       if (data && data._id) {
-        args.push(data._id);
+        args.id = data._id;
       }
 
-      this.props.save(...args);
+      this.props.save(args);
       this.props.close();
       this.setState({ title: '', description: '', error: null });
     } else {
@@ -84,7 +111,7 @@ export default class RoomModal extends Component {
 
   render() {
     const { showModal, close, roles } = this.props;
-    const { title, description, members } = this.state;
+    const { title, description, members, isVisible } = this.state;
     const buttonGroup = { marginTop: 30 };
     const notEmphatic = { border: 'none' };
     const lined = { lineHeight: 1 };
@@ -112,6 +139,7 @@ export default class RoomModal extends Component {
     const memberCreateBtn = {
       fontSize: '14px'
     };
+    const visibilityCheckBox = {display: 'inline', marginLeft: '5px'};
 
     return (
       <Modal show={ showModal } onHide={ close }>
@@ -119,6 +147,7 @@ export default class RoomModal extends Component {
           <Modal.Title>Make your room and have some fun</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css"/>
           <div className="row">
             <div className="col-md-12">
               <label style={ error }>{ this.state.error && this.state.error.message }</label>
@@ -144,6 +173,21 @@ export default class RoomModal extends Component {
                 />
               </div>
               <div className="form-group">
+                <label htmlFor="visibility" style={lined}>Visibility:</label>
+                <div className="checkbox" style={visibilityCheckBox}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={isVisible}
+                      onChange={e => {
+                        this.setState({isVisible: e.target.checked})
+                      }}
+                    />
+                    Do you want to give an access to unauthorized members?
+                  </label>
+                </div>
+              </div>
+              <div className="form-group">
                 <div className="row">
                   <div className="col-md-12">
                     <label htmlFor="members" style={ lined }>Members:</label>
@@ -159,15 +203,14 @@ export default class RoomModal extends Component {
                   return (
                     <div className="row" style={memberRow} key={key}>
                       <div className="col-md-5 col-sm-5">
-                        <input
-                          type="text"
-                          placeholder="Enter member email"
-                          defaultValue={member.email}
+                        <Select.AsyncCreatable
+                          multi={false}
+                          value={member.email}
                           onChange={
-                            e => this.updateMember(index, 'email', e.target.value, v => v)
+                            value => this.updateMember(index, 'email', value, v => v)
                           }
-                          style={ bordered }
-                          className="form-control"
+                          placeholder="Enter member email"
+                          loadOptions={(input) => this.getOptions.call(this, input, member.email)}
                         />
                       </div>
                       <div className="col-md-5 col-sm-5">
