@@ -78,6 +78,18 @@ export default class RoomModal extends Component {
     return members.find(member => !member.email);
   }
 
+  checkEqualMembers(members) {
+    return members.reduce((equal, member) => {
+        members.find(sMember => {
+          if (sMember._id !== member._id && member.email === sMember.email) {
+            equal *= 0;
+          }
+        });
+
+        return equal;
+    }, 1);
+  }
+
   save() {
     const {title, description, isVisible} = this.state;
     let members = this.state.members;
@@ -89,15 +101,19 @@ export default class RoomModal extends Component {
         ...member, email: member.email.value || member.email
       }));
 
-      const args = {title, description, members, isVisible};
+      if (this.checkEqualMembers(members)) {
+        const args = {title, description, members, isVisible};
 
-      if (data && data._id) {
-        args.id = data._id;
+        if (data && data._id) {
+          args.id = data._id;
+        }
+
+        this.props.save(args);
+        this.props.close();
+        this.setState({ title: '', description: '', error: null });
+      } else {
+        this.setState({ error: { message: 'Members must have unique email' }});
       }
-
-      this.props.save(args);
-      this.props.close();
-      this.setState({ title: '', description: '', error: null });
     } else {
       this.setState({ error: { message: 'All fields are required' }});
     }
