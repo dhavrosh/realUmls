@@ -11,6 +11,7 @@ export default function reducer(state = initialState, action = {}) {
     case LOAD:
       return state;
     case LOAD_SUCCESS: {
+      console.log(action.result.authenticationRequired);
       return {
         ...state,
         data: action.result.room,

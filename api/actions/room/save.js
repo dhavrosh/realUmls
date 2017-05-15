@@ -31,6 +31,8 @@ export default function save(req, [id]) {
             data.members.forEach(member => addKeyToMember(member, roomId));
             informMembers(roomId, data.members);
           }
+
+          data._id = roomId;
           room = new Room(data);
         }
 

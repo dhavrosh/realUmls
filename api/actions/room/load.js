@@ -9,11 +9,14 @@ export default function load(req, [id]) {
     const loadRoom = async() => {
       if (id) {
         const room = await Room.findById(id).select('-__v').lean();
+        const {k: key} = req.query;
 
         if (room) {
+          let permission;
+          let authenticationRequired = false;
+
           if (!room.isVisible) {
             const user = req.user;
-            let permission = undefined;
 
             if (user) {
               const creator = user._id == room.creator;
@@ -24,31 +27,25 @@ export default function load(req, [id]) {
 
                 permission = await getMemberPermission(creator._id);
               } else {
-                const member = room.members.find(getKeyComparator(user.email));
-
-                if (member) {
-                  permission = await getMemberPermission(member.role);
-                }
-              }
-            } else {
-              const {k: key} = req.query;
-
-              if (key) {
+                const key = user.keys.find(key => key.room == room._id).value;
                 const member = room.members.find(getKeyComparator(key));
 
                 if (member) {
                   permission = await getMemberPermission(member.role);
                 }
               }
-            }
-
-            if (permission) {
-              resolve({room, permission});
             } else {
-              reject({status: 401, message: 'Permission denied'});
+              authenticationRequired = true;
+              permission = await getPermissionByKey(key, room.members);
             }
           } else {
+            permission = await getPermissionByKey(key, room.members);
+          }
 
+          if (permission) {
+            resolve({room, permission, authenticationRequired});
+          } else {
+            reject({status: 401, message: 'Permission denied'});
           }
         } else {
           reject({status: 400, message: 'Room not found'});
@@ -62,6 +59,20 @@ export default function load(req, [id]) {
 
 function getKeyComparator(key) {
   return item => item.key === key;
+}
+
+async function getPermissionByKey(key, members) {
+  let permission;
+
+  if (key) {
+    const member = members.find(getKeyComparator(key));
+
+    if (member) {
+      permission = await getMemberPermission(member.role);
+    }
+  }
+
+  return permission;
 }
 
 async function getMemberPermission(role) {
