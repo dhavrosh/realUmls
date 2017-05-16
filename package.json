@@ -167,6 +167,7 @@
     "socket.io": "^1.3.7",
     "socket.io-client": "^1.3.7",
     "superagent": "^1.4.0",
+    "universal-cookie": "^2.0.7",
     "url-loader": "^0.5.7",
     "util": "^0.10.3",
     "violet-paginator": "^1.8.1",

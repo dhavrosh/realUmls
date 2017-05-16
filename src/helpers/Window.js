@@ -8,8 +8,11 @@ export function getHeight() {
 
 export function getElementHeight(title) {
   const el = document.querySelector(title);
-  const styles = window.getComputedStyle(el);
-  const margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
 
-  return Math.ceil(el.offsetHeight + margin);
+  if (el) {
+    const styles = window.getComputedStyle(el);
+    const margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
+
+    return Math.ceil(el.offsetHeight + margin);
+  }
 }

@@ -116,15 +116,11 @@ export function load() {
   };
 }
 
-export function signup(email, password, username) {
+export function signup(data) {
   return {
     types: [REGISTER, REGISTER_SUCCESS, REGISTER_FAIL],
     promise: (client) => client.post( '/auth/signup', {
-      data: {
-        email,
-        password,
-        username
-      }
+      data
     } )
   };
 }

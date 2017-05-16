@@ -1,8 +1,15 @@
 import React, {Component, PropTypes} from 'react';
+import Cookies from "universal-cookie";
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 import { asyncConnect } from 'redux-async-connect';
 import * as authActions from 'redux/modules/auth';
+
+let cookies;
+
+if (__CLIENT__) {
+  cookies = new Cookies();
+}
 
 @asyncConnect([{
   promise: ({store: {dispatch, getState}}) => {
@@ -23,12 +30,27 @@ export default class Login extends Component {
     login: PropTypes.func,
   };
 
+  componentDidMount() {
+    const {location} = this.props;
+
+    if (location.query.next) {
+      const expires = new Date();
+
+      expires.setDate(expires.getTime() + 10000);
+      cookies.set('next', location.query.next, {expires, path: "/"});
+    }
+  }
+
+  // TODO: add fields validation
   handleSubmit = (event) => {
     event.preventDefault();
-    const username = this.refs.email;
-    const password = this.refs.password;
-    this.props.login(username.value, password.value);
-    username.value = '';
+
+    const {email, password} = this.refs;
+    const {login} = this.props;
+
+    login(email.value, password.value);
+
+    email.value = '';
     password.value = '';
   };
 

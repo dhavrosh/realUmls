@@ -4,13 +4,15 @@ import User from '../../models/User';
 export default function load(req, [input]) {
   return new Promise((resolve, reject) => {
     const findUsers = async () => {
-      const creatorId = req.user._id;
-      const users = await User.find({
-        _id: { $ne: creatorId },
-        email : { $regex: new RegExp(input), $options: 'i' }
-      }).select('-_id email username');
+      if (req.user) {
+        const creatorId = req.user._id;
+        const users = await User.find({
+          _id: {$ne: creatorId},
+          email: {$regex: new RegExp(input), $options: 'i'}
+        }).select('-_id email username');
 
-      resolve(users);
+        resolve(users);
+      } else reject('Authentication is required');
     };
 
     findUsers().catch(reject);

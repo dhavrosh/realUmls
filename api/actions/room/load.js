@@ -3,6 +3,7 @@ import Room from '../../models/Room';
 import Role from '../../models/Role';
 import Resource from '../../models/Resource';
 import Permission from '../../models/Permission';
+import User from '../../models/User';
 
 export default function load(req, [id]) {
   return new Promise((resolve, reject) => {
@@ -14,36 +15,44 @@ export default function load(req, [id]) {
         if (room) {
           let permission;
           let authenticationRequired = false;
+          let isAnonymRegistered = false;
+          const user = req.user;
 
-          if (!room.isVisible) {
-            const user = req.user;
+          if (user) {
+            const creator = user._id == room.creator;
 
-            if (user) {
-              const creator = user._id == room.creator;
+            if (creator) {
+              const options = {title: constants.roles.creator};
+              const creator = await Role.findOne(options).select('-title').lean();
 
-              if (creator) {
-                const options = {title: constants.roles.creator};
-                const creator = await Role.findOne(options).select('-title').lean();
+              permission = await getMemberPermission(creator._id);
+            } else {
+              const key = user.keys.find(key => key.room == room._id);
 
-                permission = await getMemberPermission(creator._id);
-              } else {
-                const key = user.keys.find(key => key.room == room._id).value;
-                const member = room.members.find(getKeyComparator(key));
+              if (key) {
+                const member = room.members.find(getKeyComparator(key.value));
 
                 if (member) {
                   permission = await getMemberPermission(member.role);
                 }
               }
-            } else {
-              authenticationRequired = true;
-              permission = await getPermissionByKey(key, room.members);
             }
           } else {
+            if (!room.isVisible && key) {
+                authenticationRequired = true;
+                isAnonymRegistered = await getUserWithKey(key);
+            }
+
             permission = await getPermissionByKey(key, room.members);
           }
 
           if (permission) {
-            resolve({room, permission, authenticationRequired});
+            resolve({
+              room,
+              permission,
+              isAnonymRegistered,
+              authenticationRequired
+            });
           } else {
             reject({status: 401, message: 'Permission denied'});
           }
@@ -73,6 +82,12 @@ async function getPermissionByKey(key, members) {
   }
 
   return permission;
+}
+
+async function getUserWithKey(key) {
+  const users =  await User.find({'keys.value': {'$in': [key]}});
+
+  return users.length > 0;
 }
 
 async function getMemberPermission(role) {

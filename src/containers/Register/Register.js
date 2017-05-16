@@ -22,14 +22,26 @@ export default class Register extends Component {
     signup: PropTypes.func
   };
 
+  // TODO: add validation
   handleSubmit = (event) => {
     event.preventDefault();
 
-    const email = this.refs.email;
-    const password = this.refs.password;
-    const username = this.refs.username;
+    const {location} = this.props;
+    const {email, password, username} = this.refs;
+    const data = {
+      email: email.value,
+      password: password.value,
+      username: username.value
+    };
 
-    this.props.signup(email.value, password.value, username.value);
+    if (location.query.k && location.query.next) {
+      const room = location.query.next;
+
+      data.keys = [{value: location.query.k, room}];
+      data.room = room;
+    }
+
+    this.props.signup(data);
 
     email.value = '';
     password.value = '';

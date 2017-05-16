@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
+import Cookies from "universal-cookie";
 import Helmet from 'react-helmet';
 import { push } from 'react-router-redux';
 import { asyncConnect } from 'redux-async-connect';
@@ -15,6 +16,12 @@ import {
   load as loadRoles
 } from 'redux/modules/roles';
 import { show as showAlertModal } from 'redux/modules/alert';
+
+let cookies;
+
+if (__CLIENT__) {
+  cookies = new Cookies();
+}
 
 @asyncConnect([{
   deferred: true,
@@ -78,6 +85,13 @@ export default class Dashboard extends Component {
       ...this.state,
       modal: { data: null, show: false }
     });
+  }
+
+  componentWillMount() {
+    if (__CLIENT__ && this.props.user && cookies.get('next')) {
+      this.props.pushState(`/room/${cookies.get('next')}`);
+      cookies.remove('next');
+    }
   }
 
   render() {
