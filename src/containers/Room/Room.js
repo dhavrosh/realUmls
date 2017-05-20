@@ -5,12 +5,20 @@ import Helmet from 'react-helmet';
 import {load} from 'redux/modules/room';
 import {asyncConnect} from 'redux-async-connect';
 import RoleAwareComponent from 'helpers/RoleAwareComponent';
-import {Chat, Diagram} from 'components';
+import {
+  Chat,
+  Diagram,
+  MessageModal,
+  ErrorComponent,
+  LoginComponent,
+  SignupComponent
+} from 'components';
 import {
   getHeight as getWindowHeight,
   getWidth as getWindowWidth,
   getElementHeight
 } from 'helpers/Window';
+import Home from '../Home/Home';
 
 @asyncConnect([{
   promise: ({
@@ -35,12 +43,12 @@ export default class Room extends RoleAwareComponent {
 
   static propTypes = {
     user: PropTypes.object.isRequired,
-    room: PropTypes.object.isRequired,
-    permission: PropTypes.object.isRequired,
+    room: PropTypes.object,
+    permission: PropTypes.object,
     params: PropTypes.object.isRequired,
-    authenticationRequired: PropTypes.bool.isRequired,
+    authenticationRequired: PropTypes.bool,
     pushState: PropTypes.func.isRequired,
-    isAnonymRegistered: PropTypes.bool.isRequired
+    isAnonymRegistered: PropTypes.bool
   };
 
   constructor(props) {
@@ -126,6 +134,17 @@ export default class Room extends RoleAwareComponent {
     return getWindowWidth() <= this.COL_SM_MAX;
   }
 
+  getMessageComponent(msgComponent) {
+    return (
+      <div>
+        <Home/>
+        <MessageModal>
+          {msgComponent}
+        </MessageModal>
+      </div>
+    )
+  }
+
   render() {
     const {room, error} = this.state;
     const {user,
@@ -143,15 +162,15 @@ export default class Room extends RoleAwareComponent {
       let component;
 
       if (error) {
-        component = (<div>ERROR: {error.message}</div>);
+        component = this.getMessageComponent((<ErrorComponent description={error.message}/>));
       } else if (!user && authenticationRequired) {
         const query = `k=${location.query.k}&next=${room._id}`;
 
         component = isAnonymRegistered
-          ?(<div><button onClick={() => pushState(`/login?${query}`)}>Login</button></div>)
-          : (<div><button onClick={() => pushState(`/signup?${query}`)}>Signup</button></div>)
+          ? this.getMessageComponent((<LoginComponent query={query}/>))
+          : this.getMessageComponent((<SignupComponent query={query}/>))
       } else if (!user && !authenticationRequired) {
-        component = (<div>Write your personal info</div>)
+        component = (<div>NOT NOW</div>)
       } else {
           component = (
             <div className={style.room}>

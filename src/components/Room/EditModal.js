@@ -3,7 +3,7 @@ import axios from 'axios';
 import Select from 'react-select';
 import Modal from 'react-bootstrap/lib/Modal';
 
-export default class RoomModal extends Component {
+export default class EditModal extends Component {
   static propTypes = {
     save: PropTypes.func.isRequired,
     showModal: PropTypes.bool.isRequired,

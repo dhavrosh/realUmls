@@ -4,7 +4,7 @@ import Cookies from "universal-cookie";
 import Helmet from 'react-helmet';
 import { push } from 'react-router-redux';
 import { asyncConnect } from 'redux-async-connect';
-import { RoomPanel, RoomModal } from 'components';
+import { RoomPanel, EditModal } from 'components';
 import {
   isLoaded as areRoomsLoaded,
   loadOwn,
@@ -73,7 +73,7 @@ export default class Dashboard extends Component {
     };
   }
 
-  showRoomModal() {
+  showEditModal() {
     this.setState({
       ...this.state,
       modal: { data: this.getEmptyDataObj(), show: true }
@@ -114,7 +114,7 @@ export default class Dashboard extends Component {
           </div>
           <div className="col-md-3 col-sm-3 col-xs-3">
             <button className="btn btn-info pull-right"
-                    onClick={ this.showRoomModal.bind(this) }>
+                    onClick={ this.showEditModal.bind(this) }>
               Create
             </button>
           </div>
@@ -153,7 +153,7 @@ export default class Dashboard extends Component {
           }
           </div>
         </div>
-        <RoomModal
+        <EditModal
           showModal={ this.state.modal.show }
           data={ this.state.modal.data }
           close={ this.close.bind(this) }
