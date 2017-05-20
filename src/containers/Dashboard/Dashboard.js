@@ -52,7 +52,7 @@ if (__CLIENT__) {
 export default class Dashboard extends Component {
   static propTypes = {
     user: PropTypes.object,
-    rooms: PropTypes.array,
+    rooms: PropTypes.object,
     save: PropTypes.func,
     remove: PropTypes.func,
     showAlertModal: PropTypes.func,
@@ -113,7 +113,7 @@ export default class Dashboard extends Component {
             <h1 style={ noMargin }>Dashboard</h1>
           </div>
           <div className="col-md-3 col-sm-3 col-xs-3">
-            <button className="btn btn-info pull-right"
+            <button className="btn btn-success pull-right"
                     onClick={ this.showEditModal.bind(this) }>
               Create
             </button>
@@ -121,7 +121,12 @@ export default class Dashboard extends Component {
         </div>
         <div>
           <div className="row">
-          { rooms && (rooms.length && rooms.map(room => {
+            <div className="col-md-12">
+              <h3>Own</h3>
+            </div>
+          </div>
+          <div className="row">
+          { rooms && (rooms.own.length && rooms.own.map(room => {
             const editAction = event => {
               event.stopPropagation();
               this.setState({
@@ -132,7 +137,7 @@ export default class Dashboard extends Component {
             const removeAction = event => {
               event.stopPropagation();
               showAlert({
-                title: `Do you want to remove "${room.title}" Room?`,
+                title: `Want to remove a room?`, // "${room.title}"
                 size: 'sm',
                 accept: () => this.props.remove(room._id)
               });
@@ -149,8 +154,30 @@ export default class Dashboard extends Component {
                     </RoomPanel>
                 </div>
              );
-          }) || <div className="col-md-12">Press 'Create' to add rooms to your Dashboard</div>)
+          }) || <div className="col-md-12" style={{marginBottom: 30}}>Press 'Create' to add rooms to your Dashboard</div>)
           }
+          </div>
+          <div className="row">
+            <div className="col-md-12">
+              <h3>Shared</h3>
+            </div>
+          </div>
+          <div className="row">
+            { rooms && (rooms.shared.length && rooms.shared.map(room => {
+              const redirectAction = () => this.props.pushState(`/room/${ room._id }`);
+              return (
+                <div className="col-md-4" key={ room._id }>
+                  <RoomPanel
+                    title={ room.title }
+                    redirect={ redirectAction }>
+                    { room.description }
+                  </RoomPanel>
+                </div>
+              );
+            }) || <div className="col-md-12">
+                    You haven't got any shared room yet
+                  </div>)
+            }
           </div>
         </div>
         <EditModal

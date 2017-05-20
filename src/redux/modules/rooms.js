@@ -38,13 +38,13 @@ export default function reducer(state = initialState, action = {}) {
     case SAVE:
       return state;
     case SAVE_SUCCESS: {
-      const data = [...state.data];
-      const index = data.findIndex(chatRoom => chatRoom._id === action.result._id);
+      const data = {...state.data};
+      const index = data.own.findIndex(chatRoom => chatRoom._id === action.result._id);
 
       if (index > -1) {
-        data[index] = action.result;
+        data.own[index] = action.result;
       } else {
-        data.push(action.result);
+        data.own.push(action.result);
       }
 
       return { ...state, data: data };

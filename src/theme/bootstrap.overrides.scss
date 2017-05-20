@@ -3,6 +3,11 @@
  *
  */
 
+body {
+  background: url("/images/background_body.png");
+  background-repeat: repeat;
+}
+
 .navbar-brand {
   position: relative;
   padding-left: 50px;
@@ -11,7 +16,7 @@
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-  color: #33e0ff;
+  color: #01b49e;
   background-color: transparent;
 }
 
@@ -25,10 +30,84 @@
 }
 
 #container {
-  border-radius: 4px;
+  border-radius: 2px;
   border: 1px solid #dddddd;
+}
+
+#content {
+  font-family: 'Poppins', sans-serif;
 }
 
 .mxPopupMenu tr td hr {
   margin: 5px 0 !important;
+}
+
+input, textarea, select {
+  border-radius: 2px !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #777 !important;
+  box-shadow: none !important;
+  outline: 0 none !important;
+}
+
+.btn {
+  border-radius: 2px;
+  border: 1px solid transparent;
+}
+
+.btn:hover {
+  border: 1px solid #777;
+}
+
+.btn-success {
+  background-color: #01b49e;
+}
+
+.btn-success:hover {
+  background-color: #01b49e;
+}
+
+.btn-danger {
+  background-color: red;
+}
+
+.btn-success:hover {
+  background-color: #01b49e;
+}
+
+.btn-link {
+  color: #01b49e
+}
+
+.btn-link:hover {
+  border: 1px solid transparent;
+  color: black;
+}
+
+a {
+  color: #01b49e
+}
+
+a:hover {
+  color: black;
+}
+
+.panel {
+  border-radius: 2px;
+}
+
+.panel:hover {
+  border-radius: 2px;
+  border-color: rgba(76, 76, 76, 0.45);
+}
+
+.modal {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.modal-content {
+  border-radius: 2px !important;
+  box-shadow: none;
 }

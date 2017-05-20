@@ -3,12 +3,21 @@ import Room from '../../models/Room';
 export default function load(req) {
   return new Promise((resolve, reject) => {
     const loadOwnRoom = async () => {
-      const userId = req.user._id;
-      const options = { creator: userId };
+      const user = req.user;
+      const options = {creator: user._id};
+      const roomIds = user.keys.map(key => key.room);
+      let sharedRooms = [];
 
-      const room = await Room.find(options);
+      const ownRooms = await Room.find(options);
 
-      resolve(room);
+      if (roomIds) {
+        sharedRooms = await Room.find({'_id': {'$in': roomIds}});
+      }
+
+      resolve({
+        own: ownRooms,
+        shared: sharedRooms
+      });
     };
 
     loadOwnRoom().catch(reject);
