@@ -61,11 +61,10 @@ input:focus, textarea:focus, select:focus {
   border: 1px solid #777;
 }
 
-.btn-success {
-  background-color: #01b49e;
-}
-
-.btn-success:hover {
+.btn-success,
+.btn-success:active,
+.btn-success:hover,
+.btn-success:focus {
   background-color: #01b49e;
 }
 
@@ -73,8 +72,8 @@ input:focus, textarea:focus, select:focus {
   background-color: red;
 }
 
-.btn-success:hover {
-  background-color: #01b49e;
+.btn-danger:hover {
+  background-color: red;
 }
 
 .btn-link {
@@ -110,4 +109,17 @@ a:hover {
 .modal-content {
   border-radius: 2px !important;
   box-shadow: none;
+}
+
+.Select-control {
+  border-radius: 2px !important;
+}
+
+.Select-control:focus {
+  border-radius: 2px !important;
+  border-color: #777 !important;
+}
+
+select {
+  height: 36px !important;
 }

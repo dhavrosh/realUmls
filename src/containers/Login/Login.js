@@ -63,8 +63,10 @@ export default class Login extends Component {
         <div>
           <div className="row">
             <h1>Login</h1>
-            <form className="col-md-6 col-md-offset-3 login-form" onSubmit={this.handleSubmit}>
+            <form className="col-md-6 col-md-offset-3 login-form" onSubmit={this.handleSubmit} style={{marginTop: '20px'}}>
+              <div style={{textAlign: 'center'}}>
               <label className="error">{ loginError && loginError.message }</label>
+              </div>
               <div className="form-group">
                 <label htmlFor="email">Email:</label>
                 <input type="email" id="email" ref="email" placeholder="Enter your email" className="form-control"/>

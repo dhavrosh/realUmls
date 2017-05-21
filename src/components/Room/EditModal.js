@@ -2,6 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 import Modal from 'react-bootstrap/lib/Modal';
+import {
+  getWidth as getWindowWidth,
+} from 'helpers/Window';
 
 export default class EditModal extends Component {
   static propTypes = {
@@ -128,7 +131,7 @@ export default class EditModal extends Component {
     const { showModal, close, roles } = this.props;
     const { title, description, members, isVisible } = this.state;
     const buttonGroup = { marginTop: 30 };
-    const notEmphatic = { border: 'none' };
+    const notEmphatic = { border: 'none', textAlign: 'center', paddingBottom: 0 };
     const lined = { lineHeight: 1 };
     const error = { color: '#ac2925' };
     const bordered = {
@@ -137,19 +140,22 @@ export default class EditModal extends Component {
       border: '1px solid #ccc'
     };
     const memberRow = {
-      marginTop: 15,
-      minHeight: 35
+      minHeight: 35,
+      padding: '10px 0',
+      backgroundColor: '#ececec'
     };
     const memberRemoveCol = {
       lineHeight: '30px'
     };
     const memberRemoveBtn = {
       verticalAlign: 'center',
-      height: '34px',
+      height: '36px',
       width: '100%',
-      color: 'red',
-      backgroundColor: 'white',
-      borderColor: '#cccccc'
+      color: '#ac2925',
+      fontSize: '1.2em',
+      padding: '3px',
+      paddingLeft: getWindowWidth() < 800 ? '50%' : '3px',
+      cursor: 'pointer'
     };
     const memberCreateBtn = {
       fontSize: '14px'
@@ -165,7 +171,9 @@ export default class EditModal extends Component {
           <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css"/>
           <div className="row">
             <div className="col-md-12">
-              <label style={ error }>{ this.state.error && this.state.error.message }</label>
+              <div style={{textAlign: 'center'}}>
+                <label style={ error }>{ this.state.error && this.state.error.message }</label>
+              </div>
               <div className="form-group">
                 <label htmlFor="title" style={ lined }>Title:</label>
                 <input
@@ -190,20 +198,21 @@ export default class EditModal extends Component {
               <div className="form-group">
                 <label htmlFor="visibility" style={lined}>Visibility:</label>
                 <div className="checkbox" style={visibilityCheckBox}>
-                  <label>
+                  <label style={{paddingLeft: 0}}>
+                    Do you want to give an access to unauthorized members?
                     <input
                       type="checkbox"
                       checked={isVisible}
                       onChange={e => {
                         this.setState({isVisible: e.target.checked})
                       }}
+                      style={{marginLeft: '5px', marginTop: '3px'}}
                     />
-                    Do you want to give an access to unauthorized members?
                   </label>
                 </div>
               </div>
               <div className="form-group">
-                <div className="row">
+                <div className="row" style={{marginBottom: 15}}>
                   <div className="col-md-12">
                     <label htmlFor="members" style={ lined }>Members:</label>
                     <button className="btn btn-link btn-xs" style={memberCreateBtn} onClick={this.addMember.bind(this)}>
@@ -216,8 +225,8 @@ export default class EditModal extends Component {
                   const memberRole = roles.find(role => role._id === member.role);
 
                   return (
-                    <div className="row" style={memberRow} key={key}>
-                      <div className="col-md-5 col-sm-5">
+                    <div className="row" style={{...memberRow, paddingTop: index !== 0 ? 0 : '10px'}} key={key}>
+                      <div className="col-md-6 col-sm-6" style={{marginBottom: '3px'}}>
                         <Select.AsyncCreatable
                           multi={false}
                           value={member.email}
@@ -245,12 +254,13 @@ export default class EditModal extends Component {
                           }
                         </select>
                       </div>
-                      <div className="col-md-2 col-sm-2" style={memberRemoveCol}>
-                        <button className="btn btn-xs"
+                      <div className="col-md-1 col-sm-1" style={memberRemoveCol}>
+                        {/*<button className="btn btn-xs"
                                 style={memberRemoveBtn}
                                 onClick={() => this.removeMember(index)}>
-                          <i className="fa fa-remove"/>
-                        </button>
+
+                        </button>*/}
+                        <div onClick={() => this.removeMember(index)} style={memberRemoveBtn}><i className="fa fa-remove"/></div>
                       </div>
                     </div>
                   );

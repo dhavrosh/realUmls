@@ -56,9 +56,11 @@ export default class Register extends Component {
       <div className={ styles.loginPage }>
         <Helmet title="Signup"/>
         <h1>Signup</h1>
-        <div>
+        <div style={{marginTop: '30px'}}>
           <form className="col-md-6 col-md-offset-3 login-form" onSubmit={this.handleSubmit}>
+            <div style={{textAlign: 'center'}}>
             <label className="error">{ registerError && registerError.message }</label>
+            </div>
               <div className="form-group">
                 <label htmlFor="email">Email:</label>
                 <input type="email" id="email" ref="email" placeholder="Enter your email" className="form-control"/>

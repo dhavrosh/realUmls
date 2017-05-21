@@ -57,12 +57,14 @@ export default function reducer(state = initialState, action = {}) {
     case REMOVE:
       return state;
     case REMOVE_SUCCESS: {
-      const data = [...state.data];
-      const newData = data.filter(
+      const data = {...state.data};
+
+      data.own = data.own.filter(
         chatRoom => chatRoom._id !== action.result._id
       );
 
-      return { ...state, data: newData };
+
+      return { ...state, data };
     }
     case REMOVE_FAIL:
       return typeof action.error === 'string' ? {

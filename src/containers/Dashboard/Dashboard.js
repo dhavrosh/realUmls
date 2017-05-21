@@ -16,6 +16,9 @@ import {
   load as loadRoles
 } from 'redux/modules/roles';
 import { show as showAlertModal } from 'redux/modules/alert';
+import {
+  getWidth as getWindowWidth,
+} from 'helpers/Window';
 
 let cookies;
 
@@ -102,22 +105,27 @@ export default class Dashboard extends Component {
       save: saveAction,
       showAlertModal: showAlert
     } = this.props;
+    const headingPosition = getWindowWidth() < 600 ? '15px' : '40%';
     const margin = { margin: '30px -15px' };
-    const noMargin = { margin: 0 };
+    const noMargin = {margin: 0, display: 'inline', position: 'absolute', left: headingPosition};
 
     return (user &&
       <div>
         <Helmet title="Dashboard"/>
         <div className="row" style={ margin }>
-          <div className="col-md-9 col-sm-9 col-xs-9">
+          <div className="col-md-12 col-sm-12 col-xs-12" style={{position: 'relative'}}>
             <h1 style={ noMargin }>Dashboard</h1>
-          </div>
-          <div className="col-md-3 col-sm-3 col-xs-3">
             <button className="btn btn-success pull-right"
                     onClick={ this.showEditModal.bind(this) }>
               Create
             </button>
           </div>
+          {/*<div className="col-md-3 col-sm-3 col-xs-3">*/}
+            {/*<button className="btn btn-success pull-right"*/}
+                    {/*onClick={ this.showEditModal.bind(this) }>*/}
+              {/*Create*/}
+            {/*</button>*/}
+          {/*</div>*/}
         </div>
         <div>
           <div className="row">
