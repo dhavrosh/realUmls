@@ -9,6 +9,7 @@ import {
     Dashboard,
     Register,
     NotFound,
+    Settings
   } from 'containers';
 
 export default (store) => {
@@ -40,6 +41,7 @@ export default (store) => {
       { /* Routes requiring login */ }
       <Route onEnter={requireLogin}>
         <Route path="dashboard" component={Dashboard}/>
+        <Route path="settings" component={Settings}/>
       </Route>
 
        {/* TODO: add requireLogin */}

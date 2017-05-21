@@ -12,6 +12,9 @@ const REGISTER = 'realUmls/auth/REGISTER';
 const REGISTER_SUCCESS = 'realUmls/auth/REGISTER_SUCCESS';
 const REGISTER_FAIL = 'realUmls/auth/REGISTER_FAIL';
 const RESET_SIGNUP_ERROR = 'realUmls/auth/RESET_SIGNUP_ERROR';
+const SAVE = 'user/SAVE';
+const SAVE_SUCCESS = 'user/SAVE_SUCCESS';
+const SAVE_FAIL = 'user/SAVE_FAIL';
 
 const initialState = {
   loaded: false
@@ -100,6 +103,20 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         registerError: null
       };
+    case SAVE:
+      return state;
+    case SAVE_SUCCESS: {
+      return {
+        ...state,
+        user: action.result,
+        saveError: {message: ''}
+      };
+    }
+    case SAVE_FAIL:
+      return {
+        ...state,
+        saveError: action.error
+      };
     default:
       return state;
   }
@@ -161,5 +178,14 @@ export function logout() {
   return {
     types: [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL],
     promise: (client) => client.get( '/auth/logout' )
+  };
+}
+
+export function save(data) {
+  const url = `/user/save`;
+
+  return {
+    types: [SAVE, SAVE_SUCCESS, SAVE_FAIL],
+    promise: (client) => client.post(url, {data})
   };
 }

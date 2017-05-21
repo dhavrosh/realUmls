@@ -62,16 +62,16 @@ export default class Register extends Component {
             <label className="error">{ registerError && registerError.message }</label>
             </div>
               <div className="form-group">
-                <label htmlFor="email">Email:</label>
-                <input type="email" id="email" ref="email" placeholder="Enter your email" className="form-control"/>
+                <label htmlFor="email">Email</label>
+                <input type="email" id="email" ref="email" placeholder="Enter your email address" className="form-control"/>
               </div>
               <div className="form-group">
-                <label htmlFor="username">Username:</label>
-                <input type="text" id="username" ref="username" placeholder="Enter your username" className="form-control"/>
+                <label htmlFor="username">Username</label>
+                <input type="text" id="username" ref="username" placeholder="Pick up your nickname" className="form-control"/>
               </div>
               <div className="form-group">
-                <label htmlFor="pwd">Password:</label>
-                <input type="password" id="pwd" ref="password" placeholder="Enter your password" className="form-control"/>
+                <label htmlFor="pwd">Password</label>
+                <input type="password" id="pwd" ref="password" placeholder="Type your parole code" className="form-control"/>
               </div>
             <button className="btn btn-success pull-right" onClick={this.handleSubmit}><i className="fa fa-sign-in"/>{' '}Register
             </button>

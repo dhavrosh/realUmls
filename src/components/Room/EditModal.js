@@ -158,7 +158,7 @@ export default class EditModal extends Component {
       cursor: 'pointer'
     };
     const memberCreateBtn = {
-      fontSize: '14px'
+      fontSize: '13px'
     };
     const visibilityCheckBox = {display: 'inline', marginLeft: '5px'};
 
@@ -175,7 +175,7 @@ export default class EditModal extends Component {
                 <label style={ error }>{ this.state.error && this.state.error.message }</label>
               </div>
               <div className="form-group">
-                <label htmlFor="title" style={ lined }>Title:</label>
+                <label htmlFor="title" style={ lined }>Title</label>
                 <input
                   style={ bordered }
                   className="form-control"
@@ -186,12 +186,13 @@ export default class EditModal extends Component {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="description" style={lined}>Description:</label>
+                <label htmlFor="description" style={lined}>Description</label>
                 <textarea
                   style={ bordered }
                   className="form-control"
                   placeholder="Enter your description"
                   defaultValue={ description }
+                  rows="1"
                   onChange={e => this.setState({description: e.target.value})}
                 />
               </div>

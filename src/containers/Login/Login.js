@@ -68,12 +68,12 @@ export default class Login extends Component {
               <label className="error">{ loginError && loginError.message }</label>
               </div>
               <div className="form-group">
-                <label htmlFor="email">Email:</label>
-                <input type="email" id="email" ref="email" placeholder="Enter your email" className="form-control"/>
+                <label htmlFor="email">Email</label>
+                <input type="email" id="email" ref="email" placeholder="Enter your email address" className="form-control"/>
               </div>
               <div className="form-group">
-                <label htmlFor="pwd">Password:</label>
-                <input type="password" id="pwd" ref="password" placeholder="Enter your password" className="form-control"/>
+                <label htmlFor="pwd">Password</label>
+                <input type="password" id="pwd" ref="password" placeholder="Type your parole code" className="form-control"/>
               </div>
               <button className="btn btn-success pull-right" onClick={this.handleSubmit}><i className="fa fa-sign-in"/>
                 {' '}Log In

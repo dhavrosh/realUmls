@@ -11,6 +11,7 @@ import { AlertModal } from 'components';
 import { push } from 'react-router-redux';
 import config from '../../config';
 import { asyncConnect } from 'redux-async-connect';
+import {NavDropdown, MenuItem} from 'react-bootstrap';
 
 @asyncConnect([{
   promise: ({store: {dispatch, getState}}) => {
@@ -97,15 +98,19 @@ export default class App extends Component {
                 <LinkContainer to="/signup">
                   <NavItem eventKey={7}>Signup</NavItem>
                 </LinkContainer>}
-                {user &&
-                <LinkContainer to="/logout">
-                  <NavItem eventKey={8} className="logout-link" onClick={this.handleLogout}>
-                    Logout
-                  </NavItem>
-                </LinkContainer>}
+              {user &&
+                <div style={{padding: '15px'}}>
+                  <NavDropdown eventKey="8" id="nav-dropdown" title={user.username}>
+                    <MenuItem eventKey="9">
+                      <LinkContainer to="/settings">
+                        <NavItem eventKey={11}>Settings</NavItem>
+                      </LinkContainer>
+                     </MenuItem>
+                    <MenuItem eventKey="10" onClick={this.handleLogout}>Logout</MenuItem>
+                  </NavDropdown>
+                </div>
+              }
               </Nav>
-            {user &&
-            <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.username}</strong></p>}
           </Navbar.Collapse>
         </Navbar>
 
