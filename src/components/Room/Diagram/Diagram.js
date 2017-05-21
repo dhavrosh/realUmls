@@ -87,6 +87,45 @@ export default class Room extends Component {
           editorUI.editor.graph.setGridSize(15);
           editorUI.editor.graph.setEnabled(isEditor);
 
+          /*setTimeout(() => exportImage(editorUI.editor), 3000);
+
+          var exportImage = function(editor)
+          {
+            var graph = editor.graph;
+            var scale = graph.view.scale;
+            var bounds = graph.getGraphBounds();
+
+            // New image export
+            var xmlDoc = mxUtils.createXmlDocument();
+            var root = xmlDoc.createElement('output');
+            xmlDoc.appendChild(root);
+
+            // Renders graph. Offset will be multiplied with state's scale when painting state.
+            var xmlCanvas = new mxXmlCanvas2D(root);
+            xmlCanvas.translate(Math.floor(1 / scale - bounds.x), Math.floor(1 / scale - bounds.y));
+            xmlCanvas.scale(scale);
+
+            var imgExport = new mxImageExport();
+            imgExport.drawState(graph.getView().getState(graph.model.root), xmlCanvas);
+
+            // Puts request data together
+            var w = Math.ceil(bounds.width * scale + 2);
+            var h = Math.ceil(bounds.height * scale + 2);
+            var xml = mxUtils.getXml(root);
+
+            // Requests image if request is valid
+            if (w > 0 && h > 0)
+            {
+              var name = 'export.png';
+              var format = 'png';
+              var bg = '&bg=#FFFFFF';
+
+              new mxXmlRequest(editor.urlImage, 'filename=' + name + '&format=' + format +
+                bg + '&w=' + w + '&h=' + h + '&xml=' + encodeURIComponent(xml)).
+              simulate(document, '_blank');
+            }
+          };*/
+
         });
       })();
     }

@@ -21,7 +21,7 @@ export default function save(req, [id]) {
             const membersToInform = getNewMembers(oldMembers, receivedMembers, room._id);
 
             if (membersToInform.length > 0) {
-              informMembers(room._id, membersToInform);
+              informMembers(room._id, req.user.username, data.title, membersToInform);
             }
           }
 
@@ -29,7 +29,7 @@ export default function save(req, [id]) {
         } else {
           if (data.members) {
             data.members.forEach(member => addKeyToMember(member, roomId));
-            informMembers(roomId, data.members);
+            informMembers(roomId, req.user.username, data.title, data.members);
           }
 
           data._id = roomId;
@@ -57,14 +57,20 @@ function getNewMembers(oldMembers, receivedMembers, roomId) {
   });
 }
 
-function informMembers(roomId, members) {
+function informMembers(roomId, username, title, members) {
   members.forEach(member => {
     const options = {
       to: member.email,
-      from: 'dhavrosh@gmail.com',
-      subject: 'Room ✔',
-      text: 'Room ✔',
-      html: `<a href="http://localhost:3000/room/${roomId}?k=${member.key}">Room ✔</a>`
+      from: 'Real Diagrams',
+      subject: `Invitation from ${username}`,
+      html: `<div>
+                <h3>Hey there!</h3>
+                <p>${username} has invited you to participate in his project <b>${title}</b>.</p>
+                <p>Do not miss this opportunity and follow the link.</p>
+                <br/>
+                <a href="http://localhost:3000/room/${roomId}?k=${member.key}">Visit Real Diagrams</a>
+             </div>
+            `
     };
 
     sendMail(options);
@@ -75,8 +81,8 @@ function sendMail(options) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'dhavrosh@gmail.com',
-      pass: 'DinamoKiev2379Dan'
+      user: 'real.diagrams@gmail.com',
+      pass: 'r.diagrams'
     }
   });
 

@@ -35,14 +35,16 @@ export default class Room extends Component {
     const createdAt = moment(message.createdAt).fromNow();
     const style = require('./Chat.scss');
     const side = isOwn ? 'right' : 'left';
+    const image = require('./user.png');
 
     return (
       <li className={`${style[side]} clearfix`}>
         <span className={`chat-img pull-${side}`}>
             <img
-              src="http://placehold.it/50/FA6F57/fff&text=ME"
+              height="36px"
+              src={image}
               alt="User Avatar"
-              className="img-circle"/>
+              className="img img-circle"/>
         </span>
         <div className={style['chat-body']}>
           {
@@ -50,7 +52,7 @@ export default class Room extends Component {
               ? this.getOwnHeaderComponent(message.authorName, createdAt)
               : this.getOthersHeaderComponent(message.authorName, createdAt)
           }
-          <p>{message.text}</p>
+          <p style={{marginTop: '5px'}}>{message.text}</p>
         </div>
       </li>
     )

@@ -64,16 +64,17 @@ input:focus, textarea:focus, select:focus {
 .btn-success,
 .btn-success:active,
 .btn-success:hover,
-.btn-success:focus {
+.btn-success:focus,
+.btn-success:active:focus {
   background-color: #01b49e;
 }
 
 .btn-danger {
-  background-color: red;
+  background-color: #ac2925;
 }
 
 .btn-danger:hover {
-  background-color: red;
+  background-color: #ac2925;
 }
 
 .btn-link {

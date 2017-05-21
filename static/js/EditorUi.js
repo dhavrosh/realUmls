@@ -2642,7 +2642,7 @@ EditorUi.prototype.refresh = function(sizeDidChange) {
     this.sidebarContainer.style.top = tmp + 'px';
     this.sidebarContainer.style.width = effHsplitPosition + 'px';
     var sidebarHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
-      this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
+      this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight - 2) + 'px';
   }
 	//** this.formatContainer.style.top = tmp + 'px';
   //** this.formatContainer.style.width = fw + 'px';

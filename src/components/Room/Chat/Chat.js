@@ -64,6 +64,10 @@ export default class Room extends Component {
                   message={msg}
                 />
             )}
+            {
+              Array.isArray(messages) && messages.length === 0 &&
+                <li style={{border: 0, textAlign: 'center', marginTop: bodyHeight / 2.2}}>Here is no any messages yet</li>
+            }
           </ul>
         </div>
         {
@@ -82,7 +86,7 @@ export default class Room extends Component {
                       placeholder="Type your message here..." />
                     <span className="input-group-btn">
                         <button
-                          className="btn btn-info btn-sm"
+                          className="btn btn-success btn-sm"
                           id="btn-chat"
                           onClick={ this.handleSubmit }>
                           Send

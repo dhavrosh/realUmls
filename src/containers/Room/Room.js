@@ -57,7 +57,7 @@ export default class Room extends RoleAwareComponent {
     this.DIAGRAM_MIN_WIDTH = 800;
     this.COL_SM_MAX = 991;
     this.MARGIN_CONST = 180;
-    this.DEFAULT_BLOCK_HEIGHT = 450;
+    this.DEFAULT_BLOCK_HEIGHT = 550;
   }
 
   state = {
@@ -175,7 +175,9 @@ export default class Room extends RoleAwareComponent {
           component = (
             <div className={style.room}>
               <Helmet title="Room"/>
-              <h1 className="room-title">{ `Room ${room.title}` }</h1>
+              <div style={{textAlign: 'center'}}>
+               <h1 className="room-title">{ `${room.title}` }</h1>
+              </div>
               <div className={`${style.marginTop} row`}>
                 <div className="col-md-9 col-sm-12">
                   {

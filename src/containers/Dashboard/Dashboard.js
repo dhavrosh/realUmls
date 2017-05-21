@@ -31,13 +31,8 @@ if (__CLIENT__) {
   promise: ({store: {dispatch, getState}}) => {
     const promises = [];
 
-    if (!areRoomsLoaded(getState())) {
-      promises.push(dispatch(loadOwn()));
-    }
-
-    if (!areRolesLoaded(getState())) {
-      promises.push(dispatch(loadRoles()));
-    }
+    promises.push(dispatch(loadOwn()));
+    promises.push(dispatch(loadRoles()));
 
     return Promise.all(promises);
   }
