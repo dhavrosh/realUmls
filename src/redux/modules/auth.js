@@ -211,7 +211,7 @@ export function saveAvatar(image) {
   return dispatch => {
       const req = request.post('/api/user/upload');
 
-        req.attach(image.name, image);
+        req.attach('avatar', image);
         req.end((err, res) => {
           console.log('Done', err, res);
 

@@ -6,12 +6,24 @@ import {mapUrl} from 'utils/url.js';
 import PrettyError from 'pretty-error';
 import http from 'http';
 import SocketIo from 'socket.io';
+import multer from 'multer';
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'static/images/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // modified here  or user file.mimetype
+  }
+});
 
 require('./config/database');
 
 import * as actions from './actions/index';
 import configureAuth from './config/authentication';
 import initializeSockets from './actions/socket';
+
+const upload = multer({ storage: storage });
 
 const pretty = new PrettyError();
 const app = express();
@@ -32,6 +44,8 @@ app.use(bodyParser.urlencoded({
 }));
 
 configureAuth(app, config);
+
+app.post('/user/upload', upload.single('avatar'));
 
 app.use((req, res) => {
   const splittedUrlPath = req.url.split('?')[0].split('/').slice(1);

@@ -5,9 +5,25 @@ export default function upload(req) {
     const uploadAvatar = async () => {
       const user = req.user;
 
-      if (user) {
+      console.log(req);
 
-        resolve('Hey');
+      if (user) {
+        if (req.file) {
+          let imageSrc = req.file.destination + req.file.filename;
+
+          imageSrc = imageSrc.split("/");
+          imageSrc.shift();
+          imageSrc = imageSrc.join("/");
+
+          user.imageUrl = imageSrc;
+
+          const updatedUser = await user.save();
+
+          resolve(updatedUser);
+        } else {
+
+        }
+
       } else reject('Authentication is required');
     };
 
