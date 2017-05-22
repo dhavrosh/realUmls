@@ -17,6 +17,7 @@ const UserSchema = new Schema({
   keys: [KeySchema],
   provider: String,
   profileId: String,
+  imageUrl: String,
 });
 
 UserSchema.pre('save', function (next) {

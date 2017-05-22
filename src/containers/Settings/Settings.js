@@ -2,21 +2,26 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import Helmet from 'react-helmet';
 import {Tabs, Tab} from 'react-bootstrap';
-import {save} from 'redux/modules/auth';
+import {save, saveAvatar} from 'redux/modules/auth';
+import Dropzone from 'react-dropzone';
 
 @connect(
-  state => ({ user: state.auth.user, error: state.auth.saveError }), {save})
+  state => ({ user: state.auth.user, error: state.auth.saveError }), {save, saveAvatar})
 export default class Login extends Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
     error: PropTypes.object,
-    save: PropTypes.func.isRequired
+    save: PropTypes.func.isRequired,
+    saveAvatar: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
 
+    this.onDrop = this.onDrop.bind(this);
+    this.removeImage = this.removeImage.bind(this);
     this.save = this.save.bind(this);
+    this.saveAvatar = this.saveAvatar.bind(this);
   }
 
   state = {
@@ -24,7 +29,8 @@ export default class Login extends Component {
     oldPassword: '',
     newPassword: '',
     confirmPassword: '',
-    error: ''
+    error: '',
+    image: null
   };
 
   componentWillReceiveProps(nextProps) {
@@ -37,6 +43,20 @@ export default class Login extends Component {
     }
   }
 
+  onDrop(files) {
+    const image = files[0];
+
+    console.log(image);
+
+    this.setState({image});
+  }
+
+  removeImage(e) {
+    e.preventDefault();
+
+    this.setState({image: null});
+  }
+
   save() {
     const {username, oldPassword, newPassword, confirmPassword} = this.state;
 
@@ -47,9 +67,36 @@ export default class Login extends Component {
     }
   }
 
+  saveAvatar() {
+    const image = this.state.image;
+
+    if (image) {
+      this.props.saveAvatar(image);
+    } else {
+      // set error
+    }
+  }
+
   render() {
-    const {username, error} = this.state;
+    const {username, error, image} = this.state;
     const {user} = this.props;
+    const dropzoneStyle = {
+      width: '1000px',
+      height: '400px',
+      border: '1px solid #ccc',
+      textAlign: 'center',
+      /*position: 'relative',*/
+      cursor: 'pointer',
+      display: 'table-cell',
+      verticalAlign: 'middle'
+    };
+    const dropMeta = {
+      margin: '15px 0'
+    };
+    const imageStyle = {
+      marginTop: '15px',
+      maxWidth: '85%'
+    };
 
     const disabledProp = user.provider ? {disabled: true} : {};
 
@@ -115,7 +162,35 @@ export default class Login extends Component {
                     </button>
                   </div>
                 </Tab>
-                <Tab eventKey={3} title="Avatar">Avatar</Tab>
+                <Tab eventKey={3} title="Avatar">
+                  <div className="col-md-6 col-md-offset-3" style={{marginTop: '35px'}}>
+                    <Dropzone accept="image/jpeg, image/png" onDropAccepted={this.onDrop} style={dropzoneStyle}>
+                      <image
+                        className="img-circle"
+                        src={image && image.preview || 'images/user.png'}
+                        style={imageStyle}
+                      />
+                      {
+                        image
+                        &&
+                          <div style={dropMeta}>
+                            <button className="btn btn-link">Change</button>
+                            <button
+                              className="btn btn-link"
+                              style={{marginLeft: '10px'}}
+                              onClick={this.removeImage}
+                            >Remove</button>
+                          </div>
+                        ||
+                          <p style={dropMeta}>Try drop some files here, or click to select</p>
+                      }
+                    </Dropzone>
+                    <button className="btn btn-success pull-right" onClick={this.saveAvatar} style={{marginTop: '15px'}}>
+                      <i className="fa fa-floppy-o"/>
+                      {'  '}Save
+                    </button>
+                  </div>
+                </Tab>
               </Tabs>
             </div>
           </div>

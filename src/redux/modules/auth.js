@@ -1,3 +1,5 @@
+import request from 'superagent';
+
 const LOAD = 'realUmls/auth/LOAD';
 const LOAD_SUCCESS = 'realUmls/auth/LOAD_SUCCESS';
 const LOAD_FAIL = 'realUmls/auth/LOAD_FAIL';
@@ -15,6 +17,9 @@ const RESET_SIGNUP_ERROR = 'realUmls/auth/RESET_SIGNUP_ERROR';
 const SAVE = 'user/SAVE';
 const SAVE_SUCCESS = 'user/SAVE_SUCCESS';
 const SAVE_FAIL = 'user/SAVE_FAIL';
+const SAVE_AVATAR = 'user/avatar/SAVE';
+const SAVE_AVATAR_SUCCESS = 'user/avatar/SAVE_SUCCESS';
+const SAVE_AVATAR_FAIL = 'user/avatar/SAVE_FAIL';
 
 const initialState = {
   loaded: false
@@ -117,6 +122,18 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         saveError: action.error
       };
+    case SAVE_AVATAR_SUCCESS: {
+      return {
+        ...state,
+        user: action.result,
+        saveError: {message: ''}
+      };
+    }
+    case SAVE_AVATAR_FAIL:
+      return {
+        ...state,
+        saveError: action.error
+      };
     default:
       return state;
   }
@@ -187,5 +204,28 @@ export function save(data) {
   return {
     types: [SAVE, SAVE_SUCCESS, SAVE_FAIL],
     promise: (client) => client.post(url, {data})
+  };
+}
+
+export function saveAvatar(image) {
+  return dispatch => {
+      const req = request.post('/api/user/upload');
+
+        req.attach(image.name, image);
+        req.end((err, res) => {
+          console.log('Done', err, res);
+
+          if (err) {
+            dispatch({
+              type: SAVE_AVATAR_FAIL,
+              error: err
+            })
+          } else {
+            dispatch({
+              type: SAVE_AVATAR_SUCCESS,
+              result: res
+            });
+          }
+        });
   };
 }
