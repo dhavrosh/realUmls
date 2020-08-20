@@ -116,7 +116,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "babel-register": "^6.3.13",
     "babel-runtime": "^6.3.19",
-    "bcrypt": "^1.0.2",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.14.1",
     "compression": "^1.6.0",
     "deep-extend": "^0.4.1",
